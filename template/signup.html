@@ -5,14 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marketplace Z - Sign Up</title>
     <link rel="stylesheet" href="../static/css/signup.css">
+    <style>
+        /* Background Slideshow */
+        .background-slideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+            animation: slide 10s infinite;
+        }
 
-
+        @keyframes slide {
+            0% { background-image: url('../static/img/slide1.png'); }
+            25% { background-image: url('../static/img/slide2.jpg'); }
+            50% { background-image: url('../static/img/slide3.jpg'); }
+            75% { background-image: url('../static/img/slide4.jpg'); }
+            100% { background-image: url('../static/img/slide1.jpg'); }
+        }
+    </style>
 </head>
 <body>
 
+    <!-- Background Slideshow -->
+    <div class="background-slideshow"></div>
+
     <!-- Navbar -->
     <header>
-        <h1>Fincom</h1>
+        <nav>
+            <h1>Fincom</h1>
+        </nav>
     </header>
 
     <!-- Signup Form -->
@@ -20,19 +45,19 @@
         <h2>Create an Account</h2>
         <form id="signupForm" action="{{ url_for('signup') }}" method="POST" onsubmit="return validateForm()">
             <div class="input-box">
-                <input type="text" name="username" placeholder="Username" required>
+                <input type="text" name="username" placeholder="Username" required aria-label="Username">
             </div>
             <div class="input-box">
-                <input type="text" name="fullname" placeholder="Full Name" required>
+                <input type="text" name="fullname" placeholder="Full Name" required aria-label="Full Name">
             </div>
             <div class="input-box">
-                <input type="email" name="email" placeholder="Email Address" required>
+                <input type="email" name="email" placeholder="Email Address" required aria-label="Email">
             </div>
             <div class="input-box">
-                <input type="password" id="password" name="password" placeholder="Password" required>
+                <input type="password" id="password" name="password" placeholder="Password" required aria-label="Password">
             </div>
             <div class="input-box">
-                <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required aria-label="Confirm Password">
             </div>
             <p class="error-message" id="error-message">Passwords do not match!</p>
             <div class="input-box">
@@ -65,18 +90,28 @@
             const confirmPassword = document.getElementById('confirm_password').value;
             const errorMessage = document.getElementById('error-message');
 
-            if (password !== confirmPassword) {
+            // Password strength check (minimum 8 characters, 1 number, 1 special character)
+            const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+
+            if (!passwordRegex.test(password)) {
+                errorMessage.innerText = "Password must be at least 8 characters, include a number and a special character!";
                 errorMessage.style.display = 'block';
-                return false; // Prevent form submission
-            } else {
-                errorMessage.style.display = 'none';
-                return true; // Allow form submission
+                return false;
             }
+
+            if (password !== confirmPassword) {
+                errorMessage.innerText = "Passwords do not match!";
+                errorMessage.style.display = 'block';
+                return false;
+            }
+
+            errorMessage.style.display = 'none';
+            return true;
         }
 
         function changeColor(color) {
             document.body.style.backgroundColor = color;
-            document.querySelector('.signup-container').style.backgroundColor = color;
+            document.querySelector('.signup-container').style.background = "rgba(255, 255, 255, 0.1)";
         }
     </script>
 
