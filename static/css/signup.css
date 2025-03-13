@@ -125,7 +125,7 @@ header h1 {
     25% { background-image: url('../img/slide2.jpg'); }
     50% { background-image: url('../img/slide3.jpg'); }
     75% { background-image: url('../img/slide4.jpg'); }
-    
+    100% { background-image: url('../img/slide1.png'); }
 }
 
 /* Responsive Design */
