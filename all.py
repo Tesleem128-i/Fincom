@@ -526,7 +526,7 @@ def income():
             submitter_name = session.get('username')  # Assuming 'username' is stored in the session
             if not submitter_name:
                 flash("User not logged in. Please log in to add income.", "error")
-                return redirect(url_for('login'))  # Redirect to login if not logged in
+                return render_template('login.html')  # Redirect to login if not logged in
 
             income_type = request.form['income_type']
             account = request.form['account']
@@ -539,7 +539,7 @@ def income():
             add_income(submitter_name, income_type, account, category, description, amount, quantity)
 
             flash("Income added successfully!", "success")
-            return redirect(url_for('income'))  # Redirect to avoid form resubmission
+            return render_template('income.html') # Redirect to avoid form resubmission
 
         except KeyError as e:
             flash(f"Missing field: {str(e)}", "error")
