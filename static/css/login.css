@@ -1,0 +1,105 @@
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #111;
+    color: white;
+    text-align: center;
+}
+
+.color-switcher {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+}
+
+.color-switcher button {
+    border: none;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+}
+
+.login-container {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+    width: 300px;
+    margin: 20px;
+}
+
+.input-box {
+    margin: 10px 0;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: #f4b400;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    color: #222;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-btn:hover {
+    background: #ffcc00;
+}
+
+.login-link {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.login-link a {
+    color: #f4b400;
+    text-decoration: none;
+}
+
+.image-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: 10px; /* Space between images */
+    width: 100%;
+    max-width: 800px; /* Set a max-width for the image container */
+    margin: 20px 0;
+}
+
+.image-container img {
+    width: 100%; /* Full width of the grid cell */
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+}
+
+.bottom-image {
+    width: 90%; /* Increased width for the bottom image */
+    margin-top: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .image-container {
+        grid-template-columns: 1fr; /* Stack images on smaller screens */
+    }
+}

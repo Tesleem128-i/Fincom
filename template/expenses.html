@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Add Expense</title>
+  <link rel="stylesheet" href="../static/css/expenses.css">
+
+</head>
+<body>
+  <div class="container">
+    <h2>Add Expense</h2>
+    <!-- Display Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-message flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    
+    <form action="{{ url_for('expenses') }}" method="POST">
+      <label for="name">Your Name:</label>
+      <input type="text" name="name" id="name" required placeholder="Enter your name">
+      
+      <label for="expense_type">Type:</label>
+      <input type="text" name="expense_type" id="expense_type" value="expense" readonly>
+      
+      <label for="account">Account:</label>
+      <select name="account" id="account" required>
+          <option value="" disabled selected>Select an account</option>
+          <option value="cash">Cash</option>
+          <option value="card">Card</option>
+      </select>
+      
+      <label for="category">Category:</label>
+      <select name="category" id="category" required>
+          <option value="" disabled selected>Select a category</option>
+          <option value="rent">Rent</option>
+          <option value="utilities">Utilities</option>
+          <option value="groceries">Groceries</option>
+          <option value="transportation">Transportation</option>
+          <option value="entertainment">Entertainment</option>
+      </select>
+      
+      <label for="description">Description:</label>
+      <textarea name="description" id="description" placeholder="Describe your expense" rows="3" required></textarea>
+      
+      <label for="amount">Amount (Naira):</label>
+      <input type="number" name="amount" id="amount" step="0.01" placeholder="Enter amount" required>
+      
+      <label for="quantity">Quantity:</label>
+      <input type="number" name="quantity" id="quantity" placeholder="Enter quantity" required>
+      
+      <button type="submit">Add Expense</button>
+      <button type="button" class="back-button" onclick="window.history.back();">Back</button> <!-- Back button -->
+    </form>
+  </div>
+</body>
+</html>

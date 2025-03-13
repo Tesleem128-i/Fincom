@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify PIN</title>
+    <link rel="stylesheet" href="../static/css/verify_pin.css">
+
+</head>
+<body>
+    <div class="container">
+        <h1>Verify Your PIN</h1>
+        <p>Enter the PIN sent to your email to verify your account.</p>
+        <form action="/verify_pin" method="POST">
+            <input type="text" name="pin" placeholder="Enter your PIN" required>
+            <button type="submit" class="btn">Verify</button>
+        </form>
+        <a href="/signup" class="back-link">Back to Signup</a>
+    </div>
+</body>
+</html>

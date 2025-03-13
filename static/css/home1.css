@@ -1,0 +1,76 @@
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #111;
+    color: white;
+    text-align: center;
+    transition: background-color 0.3s, color 0.3s;
+}
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+h1 {
+    margin-bottom: 20px;
+}
+.theme-switcher {
+    margin: 20px 0;
+}
+.theme-switcher button {
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 5px;
+    width: 40px;
+    height: 40px;
+    transition: transform 0.2s;
+}
+.theme-switcher button:hover {
+    transform: scale(1.1);
+}
+.nav-buttons {
+    margin-top: 20px;
+}
+.nav-buttons button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    margin: 10px;
+    cursor: pointer;
+    background-color: #4c9aff;
+    color: white;
+    transition: background-color 0.3s, transform 0.2s;
+}
+.nav-buttons button:hover {
+    background-color: #357ae8;
+    transform: translateY(-2px);
+}
+.logout-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #ffcc00;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 6px;
+    margin-top: 20px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+.logout-btn:hover {
+    background-color: #a4ba00;
+    transform: translateY(-2px);
+}
+footer {
+    margin-top: 20px;
+    padding: 10px 0;
+    background-color: #222;
+    color: white;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}

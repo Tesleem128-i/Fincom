@@ -1,0 +1,102 @@
+
+/* Reset some default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Global Styles */
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  background-color: #333;
+  color: #f4f4f4;
+}
+
+/* Header Styles */
+header {
+  background: #111;
+  color: #d88f06;
+  padding: 20px;
+  text-align: center;
+}
+header h1 {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+header p {
+  font-size: 1.1em;
+}
+
+/* Navigation Styles */
+nav {
+  background: #222;
+  padding: 10px 0;
+  text-align: center;
+}
+nav a {
+  color: #f3f3f3;
+  margin: 0 15px;
+  text-decoration: none;
+  font-size: 1.1em;
+  transition: color 0.3s ease;
+}
+nav a:hover {
+  color: #f4f4f4;
+}
+
+/* Main Content Styles */
+main {
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #d88f06;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+section {
+  margin-bottom: 30px;
+}
+section h2 {
+  margin-bottom: 15px;
+  color: #222;
+  font-size: 2em;
+}
+section p {
+  margin-bottom: 15px;
+  line-height: 1.8;
+  font-size: 1.1em;
+}
+
+/* Footer Styles */
+footer {
+  text-align: center;
+  padding: 15px 0;
+  margin-top: 30px;
+  background-color: #222;
+}
+
+footer p {
+  margin: 0;
+  color: #ccc;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #ffcc00;
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  border-radius: 6px;
+  margin-top: 10px;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background-color: #008cba;
+}
+
+/* Responsive Styles */
+

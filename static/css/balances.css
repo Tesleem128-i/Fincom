@@ -1,0 +1,48 @@
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #111;
+    color: white;
+    text-align: center;
+}
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #222;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.1);
+}
+h1 {
+    margin-bottom: 20px;
+}
+.balance {
+    font-size: 20px;
+    margin: 15px 0;
+}
+.bank-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #ffcc00;
+    color: black;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 6px;
+    margin-top: 20px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+.bank-btn:hover {
+    background-color: #a4ba00;
+    transform: translateY(-2px);
+}
+footer {
+    margin-top: 20px;
+    padding: 10px 0;
+    background-color: #222;
+    color: white;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace Z - Sign Up</title>
+    <link rel="stylesheet" href="../static/css/signup.css">
+
+
+</head>
+<body>
+
+    <!-- Navbar -->
+    <header>
+        <h1>Fincom</h1>
+    </header>
+
+    <!-- Signup Form -->
+    <div class="signup-container">
+        <h2>Create an Account</h2>
+        <form id="signupForm" action="{{ url_for('signup') }}" method="POST" onsubmit="return validateForm()">
+            <div class="input-box">
+                <input type="text" name="username" placeholder="Username" required>
+            </div>
+            <div class="input-box">
+                <input type="text" name="fullname" placeholder="Full Name" required>
+            </div>
+            <div class="input-box">
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-box">
+                <input type="password" id="password" name="password" placeholder="Password" required>
+            </div>
+            <div class="input-box">
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+            </div>
+            <p class="error-message" id="error-message">Passwords do not match!</p>
+            <div class="input-box">
+                <select name="nationality" required>
+                    <option value="" disabled selected>Select Nationality</option>
+                    <option value="American">American</option>
+                    <option value="Canadian">Canadian</option>
+                    <option value="British">British</option>
+                    <option value="Australian">Australian</option>
+                    <option value="Indian">Indian</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="customer-type">
+                <input type="radio" id="family" name="customer_type" value="family" required>
+                <label for="family">Family</label>
+                <input type="radio" id="company" name="customer_type" value="company" required>
+                <label for="company">Company</label>
+                <input type="radio" id="individual" name="customer_type" value="individual" required>
+                <label for="individual">Individual</label>
+            </div>
+            <button type="submit" class="signup-btn">Sign Up</button>
+        </form>
+        <p>Already have an account? <a href="{{ url_for('login') }}" class="btn">Login</a></p>
+    </div>
+
+    <script>
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const errorMessage = document.getElementById('error-message');
+
+            if (password !== confirmPassword) {
+                errorMessage.style.display = 'block';
+                return false; // Prevent form submission
+            } else {
+                errorMessage.style.display = 'none';
+                return true; // Allow form submission
+            }
+        }
+
+        function changeColor(color) {
+            document.body.style.backgroundColor = color;
+            document.querySelector('.signup-container').style.backgroundColor = color;
+        }
+    </script>
+
+</body>
+</html>

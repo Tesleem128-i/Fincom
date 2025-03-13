@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounting Dashboard</title>
+    <link rel="stylesheet" href="../static/css/home1.css">
+
+</head>
+<body>
+    <div class="container">
+        <h1>Accounting Dashboard</h1>
+        <div class="theme-switcher">
+            <button style="background-color: #ff4c4c;" onclick="changeTheme('#ff4c4c')"></button>
+            <button style="background-color: #4c9aff;" onclick="changeTheme('#4c9aff')"></button>
+            <button style="background-color: #4caf50;" onclick="changeTheme('#4caf50')"></button>
+            <button style="background-color: #ffcc00;" onclick="changeTheme('#ffcc00')"></button>
+            <button style="background-color: #800080;" onclick="changeTheme('#800080')"></button>
+            <button style="background-color: #ff69b4;" onclick="changeTheme('#ff69b4')"></button>
+            <button style="background-color: #808080;" onclick="changeTheme('#808080')"></button>
+            <button style="background-color: #008080;" onclick="changeTheme('#008080')"></button>
+        </div>
+        
+        <h2>{{ message }}</h2>
+        <h3>What would you like to do today?</h3>
+
+        <div class="nav-buttons">
+            <button onclick="window.location.href='/expenses'">Add Expense</button>
+            <button onclick="window.location.href='/balances'">View Balance</button>
+            <button onclick="window.location.href='/edit_user'">setting</button>
+        </div>
+    </div>
+    
+    <script>
+        function changeTheme(color) {
+            document.body.style.backgroundColor = color;
+            document.body.style.color = (color === "#111" || color === "#800080") ? "white" : "black";
+        }
+    </script>
+
+    <footer>
+        <p>&copy; 2025 Fincom. All Rights Reserved.</p>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounting Dashboard</title>
+    <link rel="stylesheet" href="../static/css/home.css">
+
+</head>
+<body>
+    <div class="container">
+        <h1>Accounting Dashboard</h1>
+        <div class="theme-switcher">
+            <button class="red" onclick="changeTheme('#ff4c4c')"></button>
+            <button class="blue" onclick="changeTheme('#4c9aff')"></button>
+            <button class="green" onclick="changeTheme('#4caf50')"></button>
+            <button class="yellow" onclick="changeTheme('#ffcc00')"></button>
+            <button class="purple" onclick="changeTheme('#800080')"></button>
+            <button class="pink" onclick="changeTheme('#ff69b4')"></button>
+            <button class="gray" onclick="changeTheme('#808080')"></button>
+            <button class="teal" onclick="changeTheme('#008080')"></button>
+        </div>
+        <div class="container">
+            <h1>{{ message }}</h1>
+            <h2>What would you like to do today?</h2>
+           
+                <!-- Add more actions as needed -->
+            
+        </div>
+        <div class="dashboard">
+            <div class="card" onclick="navigate('add_expense.html')">Add expense</div>
+            <div class="card" onclick="navigate('add_income.html')">Add income</div>
+            <div class="card" onclick="navigate('Profit.html')">View Profit</div>
+            <div class="card" onclick="navigate('ledger.html')">View Ledger</div>
+            <div class="card" onclick="navigate('balance_sheet.html')">View Balance Sheet</div>
+            <div class="card" onclick="navigate('cash_book.html')">View Cash Book</div>
+            <div class="card" onclick="navigate('category_report.html')">Category Report</div>
+            <div class="card" onclick="navigate('visualize.html')">Visualize Data</div>
+            <div class="card" onclick="navigate('inventory.html')">Manage Inventory</div>
+            <div class="card" onclick="navigate('spending_advice.html')">Spending Advice</div>
+        </div>
+    </div>
+
+    <script>
+        function changeTheme(color) {
+            document.body.style.backgroundColor = color;
+        }
+        function navigate(page) {
+            window.location.href = page;
+        }
+    </script>
+</body>
+<footer>
+    <p>&copy; 2025 Fincom. All Rights Reserved.</p>
+    <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+</footer>
+</html>
