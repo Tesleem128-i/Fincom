@@ -575,16 +575,22 @@ def update_profit(username):
             cursor.close()
             conn.close()
             
-            
 @app.route('/get_profit')
 def profit_page():
+    # Check if the user is logged in
+    if 'user_id' not in session:
+        return render_template('login.html') # Redirect to login if not logged in
+
+    user_id = session['user_id']  # Get the logged-in user's ID
+
     conn = get_db_connection()
     if conn is None:
         return "Database connection error", 500
 
     cursor = conn.cursor()
     try:
-        cursor.execute("SELECT SUM(profit) FROM users")
+        # Fetch the profit for the logged-in user
+        cursor.execute("SELECT SUM(profit) FROM users WHERE id = %s", (user_id,))
         result = cursor.fetchone()
         total_profit = float(result[0]) if result and result[0] is not None else 0  # Convert to float
 
@@ -595,7 +601,6 @@ def profit_page():
     finally:
         cursor.close()
         conn.close()
-
 
 @app.route('/logout')
 def logout():
