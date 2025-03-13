@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, flash
+from flask import Flask, render_template, request, redirect, session, flash, jsonify
 import mysql.connector
 from mysql.connector import Error
 from flask_bcrypt import Bcrypt
@@ -575,20 +575,27 @@ def update_profit(username):
             cursor.close()
             conn.close()
             
-def get_profit():
+            
+@app.route('/get_profit')
+def profit_page():
     conn = get_db_connection()
-    if conn:
-        cursor = conn.cursor()
-        try:
-            cursor.execute("SELECT SUM(profit) FROM users")
-            profit = cursor.fetchone()[0]
-            return profit if profit is not None else 0
-        except mysql.connector.Error as e:
-            print(f"Error calculating profit: {e}")
-            return 0
-        finally:
-            cursor.close()
-            conn.close()            
+    if conn is None:
+        return "Database connection error", 500
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT SUM(profit) FROM users")
+        result = cursor.fetchone()
+        total_profit = float(result[0]) if result and result[0] is not None else 0  # Convert to float
+
+        return render_template("get_profit.html", total_profit=total_profit)  # Pass total_profit
+    except mysql.connector.Error as e:
+        print(f"Error fetching profit: {e}")
+        return "Database error", 500
+    finally:
+        cursor.close()
+        conn.close()
+
 
 @app.route('/logout')
 def logout():

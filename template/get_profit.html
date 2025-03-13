@@ -10,14 +10,13 @@
     <div class="container">
         <h1>Your Profit</h1>
         
-        {% if profit %}
-            <p class="profit">Total Profit: {{ balance.total_profit }}</p>
-            <p class="profit">Total Profit: {{ balance.total_profit }}</p>
+        {% if total_profit %}
+            <p class="profit">Total Profit: {{ total_profit }}</p>
         {% else %}
             <p>No transactions found.</p>
         {% endif %}
 
-        <a href="{{ url_for(user_home) }}" class="bank-btn">Bank</a>
+        <a href="{{ url_for('home1') }}" class="bank-btn">Bank</a>
     </div>
 
     <footer>
