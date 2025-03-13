@@ -362,13 +362,12 @@ def balances():
 
 
 def add_expenses(submitter_name, expense_type, account, category, description, amount, quantity):
-    total_amount = amount * quantity  # Calculate total expense
-    conn = get_db_connection()  # Establish a database connection
-    
+    total_amount = amount * quantity
+    conn = get_db_connection()
+
     if conn:
         cursor = conn.cursor()
         try:
-            # Insert the expense into the transactions table
             query = """
                 INSERT INTO transactions (name, type, account, category, description, amount, quantity, total_amount)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
@@ -376,7 +375,6 @@ def add_expenses(submitter_name, expense_type, account, category, description, a
             values = (submitter_name, expense_type, account, category, description, amount, quantity, total_amount)
             cursor.execute(query, values)
 
-            # Update the user's total expenses and balance based on the expense type
             if account == 'cash':
                 cursor.execute("""
                     UPDATE users
@@ -392,16 +390,15 @@ def add_expenses(submitter_name, expense_type, account, category, description, a
                     WHERE username = %s
                 """, (total_amount, total_amount, submitter_name))
 
-            conn.commit()  # Commit the changes to the database
+            conn.commit()
+            update_profit(submitter_name)  # Update profit after expense update
             print("Expense added and balances updated successfully!")
         except mysql.connector.Error as e:
             print(f"Error inserting expense or updating balances: {e}")
-            conn.rollback()  # Rollback in case of error
+            conn.rollback()
         finally:
-            cursor.close()  # Close the cursor
-            conn.close()    # Close the connection
-    else:
-        print("Failed to connect to the database.")
+            cursor.close()
+            conn.close()
 
 def sum_total_expenses():
     conn = get_db_connection()
@@ -462,17 +459,15 @@ def total_expenses():
     return render_template('Total_expenses.html', total=total)
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
 
 def add_income(submitter_name, income_type, account, category, description, amount, quantity):
-    total_amount = amount * quantity  # Calculate total income
-    conn = get_db_connection()  # Establish a database connection
-    
+    total_amount = amount * quantity
+    conn = get_db_connection()
+
     if conn:
         cursor = conn.cursor()
         try:
-            # Insert the expense into the transactions table
             query = """
                 INSERT INTO transactions (name, type, account, category, description, amount, quantity, total_amount)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
@@ -480,39 +475,39 @@ def add_income(submitter_name, income_type, account, category, description, amou
             values = (submitter_name, income_type, account, category, description, amount, quantity, total_amount)
             cursor.execute(query, values)
 
-            # Update the user's total expenses and balance based on the expense type
             if account == 'cash':
                 cursor.execute("""
                     UPDATE users
-                    SET cash_balance = cash_balance - %s,
-                        total_expenses = total_expenses + %s
+                    SET cash_balance = cash_balance + %s,
+                        total_income = total_income + %s
                     WHERE username = %s
                 """, (total_amount, total_amount, submitter_name))
             elif account == 'card':
                 cursor.execute("""
                     UPDATE users
-                    SET card_balance = card_balance - %s,
-                        total_expenses = total_expenses + %s
+                    SET card_balance = card_balance + %s,
+                        total_income = total_income + %s
                     WHERE username = %s
                 """, (total_amount, total_amount, submitter_name))
 
-            conn.commit()  # Commit the changes to the database
-            print("Expense added and balances updated successfully!")
+            conn.commit()
+            update_profit(submitter_name)  # Update profit after income update
+            print("Income added and balances updated successfully!")
         except mysql.connector.Error as e:
-            print(f"Error inserting expense or updating balances: {e}")
-            conn.rollback()  # Rollback in case of error
+            print(f"Error inserting income or updating balances: {e}")
+            conn.rollback()
         finally:
-            cursor.close()  # Close the cursor
-            conn.close()    # Close the connection
-    else:
-        print("Failed to connect to the database.")
+            cursor.close()
+            conn.close()
+            
 
+# Function to calculate total income
 def sum_total_income():
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
         try:
-            cursor.execute("SELECT SUM(total_amount) FROM expenses")
+            cursor.execute("SELECT SUM(total_amount) FROM transactions")  # Correct table name
             total = cursor.fetchone()[0]
             return total if total is not None else 0
         except mysql.connector.Error as e:
@@ -522,8 +517,7 @@ def sum_total_income():
             cursor.close()
             conn.close()
 
-from flask import session
-
+# Route to handle income submission
 @app.route('/income', methods=['GET', 'POST'])
 def income():
     if request.method == 'POST':
@@ -531,8 +525,8 @@ def income():
             # Retrieve the user's name from the session
             submitter_name = session.get('username')  # Assuming 'username' is stored in the session
             if not submitter_name:
-                flash("User  not logged in. Please log in to add expenses.", "error")
-                return redirect('/login')  # Redirect to login if not logged in
+                flash("User not logged in. Please log in to add income.", "error")
+                return redirect(url_for('login'))  # Redirect to login if not logged in
 
             income_type = request.form['income_type']
             account = request.form['account']
@@ -541,11 +535,11 @@ def income():
             amount = float(request.form['amount'])
             quantity = float(request.form['quantity'])
 
-            # Call the function to add expenses
-            add_expenses(submitter_name, income_type, account, category, description, amount, quantity)
+            # Call the function to add income
+            add_income(submitter_name, income_type, account, category, description, amount, quantity)
 
             flash("Income added successfully!", "success")
-            
+            return redirect(url_for('income'))  # Redirect to avoid form resubmission
 
         except KeyError as e:
             flash(f"Missing field: {str(e)}", "error")
@@ -556,14 +550,46 @@ def income():
 
     return render_template('income.html')
 
-  # Redirect to user list page
-
-    
-
+# Route to display total income
 @app.route('/total_income')
 def total_income():
     total = sum_total_income()
     return render_template('Total_income.html', total=total)
+
+
+def update_profit(username):
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        try:
+            cursor.execute("""
+                UPDATE users 
+                SET profit = (total_income - total_expenses) 
+                WHERE username = %s
+            """, (username,))
+            conn.commit()
+        except mysql.connector.Error as e:
+            print(f"Error updating profit: {e}")
+            conn.rollback()
+        finally:
+            cursor.close()
+            conn.close()
+            
+def get_profit():
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        try:
+            cursor.execute("SELECT SUM(profit) FROM users")
+            profit = cursor.fetchone()[0]
+            return profit if profit is not None else 0
+        except mysql.connector.Error as e:
+            print(f"Error calculating profit: {e}")
+            return 0
+        finally:
+            cursor.close()
+            conn.close()            
+
 @app.route('/logout')
 def logout():
     session.clear()
