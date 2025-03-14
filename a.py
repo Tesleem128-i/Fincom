@@ -1,34 +1,48 @@
-from flask import Flask, render_template, request, redirect, session, flash
-import mysql.connector
-from mysql.connector import Error
-from flask_bcrypt import Bcrypt
-import re
-from flask_mail import Mail, Message
-import random
+def suggest_business(capital):
+    businesses = {
+        "Low Budget": {
+            "Dropshipping": "https://www.youtube.com/watch?v=3jN5vXZJM4U",
+            "Blogging or YouTube": "https://www.youtube.com/watch?v=VvD_C8Jj9mA",
+            "Freelance Writing": "https://www.youtube.com/watch?v=W4xyNGg7F4A"
+        },
+        "Medium Budget": {
+            "Mini Importation": "https://www.youtube.com/watch?v=TtS2aGnk6C4",
+            "Food Business": "https://www.youtube.com/watch?v=FO5CFEKqp1o",
+            "E-commerce Store": "https://www.youtube.com/watch?v=6MBcT-dkGqk"
+        },
+        "High Budget": {
+            "Real Estate Investment": "https://www.youtube.com/watch?v=hqxA-jFqG5o",
+            "Tech Startup": "https://www.youtube.com/watch?v=mMF3U6BXi_o",
+            "Logistics Business": "https://www.youtube.com/watch?v=_PfpF4N7TxA"
+        }
+    }
 
-app = Flask(__name__, template_folder='.')
-bcrypt = Bcrypt(app)
-app.secret_key = "your_secret_key"
+    # Categorizing based on budget
+    if capital < 500:
+        category = "Low Budget"
+    elif 500 <= capital < 5000:
+        category = "Medium Budget"
+    else:
+        category = "High Budget"
 
+    print(f"\nBased on your budget (${capital}), here are some business ideas:\n")
+    business_options = list(businesses[category].keys())
 
-# Configure Flask-Mail
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = 'muhammedtesleemolatundun.com'  # Your email address
-app.config['MAIL_PASSWORD'] = 'csqv yavo jcwj bghz'  # Your email password
-app.config['MAIL_DEFAULT_SENDER'] = 'projectfinodido@gmail.com'  # Default sender
+    for i, business in enumerate(business_options, 1):
+        print(f"{i}. {business}")
 
-mail = Mail(app)
-def get_db_connection():
+    # User selects a business
     try:
-        return mysql.connector.connect(
-            host="localhost",
-            user="Teslim",
-            password="Tesleem@123",
-            database="mydatabase"
-        )
-    except Error as e:
-        print(f"Error connecting to database: {e}")
-        return None 
+        choice = int(input("\nEnter the number of the business you want to learn about: "))
+        selected_business = business_options[choice - 1]
+        print(f"\nGreat choice! Watch this tutorial on {selected_business}:")
+        print(businesses[category][selected_business])
+    except (ValueError, IndexError):
+        print("\nInvalid choice. Please enter a valid number from the list.")
+
+# Get user input
+try:
+    user_money = float(input("Enter the amount of money you have ($): "))
+    suggest_business(user_money)
+except ValueError:
+    print("Invalid input. Please enter a numeric value.")
