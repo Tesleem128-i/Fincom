@@ -17,7 +17,7 @@
         {% for category, message in messages %}
           <div class="flash-message flash-{{ category }}">{{ message }}</div>
         {% endfor %}
-      {% endif %}
+      {% endif %}  
     {% endwith %}
     
     <form action="{{ url_for('income') }}" method="POST">
@@ -30,7 +30,7 @@
       <label for="account">Account:</label>
       <select name="account" id="account" required>
           <option value="" disabled selected>Select an account</option>
-          <option value="cash">Cash</option>
+          <option value="cash">Cash</option> 
           <option value="card">Card</option>
       </select>
       
