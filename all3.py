@@ -435,7 +435,7 @@ def expenses():
 
             add_expenses(submitter_name, expense_type, account, category, description, amount, quantity)
 
-            return redirect('/expenses')
+            return redirect('/home1')
 
         except (KeyError, ValueError):
             flash("Please fill in all fields correctly.", "error")
@@ -523,7 +523,7 @@ def income():
 
             add_income(submitter_name, income_type, account, category, description, amount, quantity)
 
-            return redirect('/income')
+            return redirect('/home1')
 
         except (KeyError, ValueError):
             flash("Please fill in all fields correctly.", "error")
