@@ -142,6 +142,106 @@ nav ul li a:hover {
     margin-bottom: 20px;
 }
 
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #111;
+    color: white;
+    transition: background-color 0.3s, color 0.3s;
+    text-align: center;
+}
+
+.testimonials {
+    width: 90%;
+    margin: 50px auto;
+    padding: 20px;
+    background: #222;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.testimonials h2 {
+    font-size: 32px;
+    color: #f4b400;
+    margin-bottom: 20px;
+}
+
+/* Testimonial Container */
+.testimonial-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding: 10px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar for IE */
+}
+
+.testimonial-container::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome, Safari */
+}
+
+/* Testimonial Box */
+.testimonial {
+    flex: 0 0 auto;
+    width: 300px;
+    padding: 20px;
+    background: #333;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    scroll-snap-align: center;
+    transition: transform 0.3s;
+}
+
+.testimonial:hover {
+    transform: scale(1.05);
+}
+
+/* User Images */
+.testimonial img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 2px solid #f4b400;
+}
+
+/* Testimonial Text */
+.text h3 {
+    font-size: 18px;
+    margin: 0;
+    color: #ffcc00;
+}
+
+.text .role {
+    font-size: 14px;
+    color: #ccc;
+    margin-bottom: 5px;
+}
+
+.text p {
+    font-size: 16px;
+    color: #ddd;
+    margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .testimonial-container {
+        flex-direction: row;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+    }
+
+    .testimonial {
+        flex: 0 0 80%;
+        text-align: center;
+    }
+}
+
 /* Image Gallery */
 .image-gallery {
     padding: 60px 0;
