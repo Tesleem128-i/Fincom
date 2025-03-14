@@ -378,18 +378,25 @@ def update_profit(username):
 
 def add_expenses(submitter_name, expense_type, account, category, description, amount, quantity):
     conn = get_db_connection()
-
     if conn:
         cursor = conn.cursor()
         try:
-            # Calculate total_amount here instead of inserting it
-            print(f"Inserting expense: {submitter_name}, {expense_type}, {account}, {category}, {description}, {amount}, {quantity}")
-            
-            # Insert expense record without total_amount
+            # Fetch the user_id based on the username
+            cursor.execute("SELECT id FROM users WHERE username = ?", (submitter_name,))
+            user_row = cursor.fetchone()
+            if not user_row:
+                flash("User not found. Please log in again.", "error")
+                return
+            user_id = user_row[0]
+
+            # Calculate total amount
+            total_amount = amount * quantity
+
+            # Insert expense with user_id
             cursor.execute("""
                 INSERT INTO transactions (user_id, name, type, account, category, description, amount, quantity)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (submitter_name, expense_type, account, category, description, amount, quantity))
+            """, (user_id, submitter_name, expense_type, account, category, description, amount, quantity))
 
             # Update user balance
             balance_column = f"{account}_balance"
@@ -397,13 +404,14 @@ def add_expenses(submitter_name, expense_type, account, category, description, a
                 UPDATE users
                 SET {balance_column} = COALESCE({balance_column}, 0) - ?,
                     total_expenses = COALESCE(total_expenses, 0) + ?
-                WHERE username = ?
-            """, (amount * quantity, amount * quantity, submitter_name))
+                WHERE id = ?
+            """, (total_amount, total_amount, user_id))
 
             conn.commit()
-            print("Expense added and balances updated successfully!")
+            flash("Expense added successfully!", "success")
+
         except sqlite3.Error as e:
-            print(f"Error inserting expense or updating balances: {e}")
+            flash(f"Error inserting expense: {e}", "error")
             conn.rollback()
         finally:
             cursor.close()
@@ -427,7 +435,6 @@ def expenses():
 
             add_expenses(submitter_name, expense_type, account, category, description, amount, quantity)
 
-            flash("Expense added successfully!", "success")
             return redirect('/expenses')
 
         except (KeyError, ValueError):
@@ -437,12 +444,13 @@ def expenses():
 
     return render_template('expenses.html')
 
+# Function to calculate total expenses
 def sum_total_expenses():
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
         try:
-            cursor.execute("SELECT COALESCE(SUM(total_amount), 0) FROM transactions WHERE type='expense'")
+            cursor.execute("SELECT COALESCE(SUM(amount * quantity), 0) FROM transactions WHERE type='expense'")
             return cursor.fetchone()[0]
         except sqlite3.Error as e:
             print(f"Error calculating total expenses: {e}")
@@ -455,20 +463,28 @@ def sum_total_expenses():
 def total_expenses():
     return render_template('total_expenses.html', total=sum_total_expenses())
 
+# Function to add an income
 def add_income(submitter_name, income_type, account, category, description, amount, quantity):
     conn = get_db_connection()
-
     if conn:
         cursor = conn.cursor()
         try:
-            # Insert income record without total_amount
+            # Fetch the user_id based on the username
+            cursor.execute("SELECT id FROM users WHERE username = ?", (submitter_name,))
+            user_row = cursor.fetchone()
+            if not user_row:
+                flash("User not found. Please log in again.", "error")
+                return
+            user_id = user_row[0]
+
+            # Calculate total amount
+            total_amount = amount * quantity
+
+            # Insert income with user_id
             cursor.execute("""
                 INSERT INTO transactions (user_id, name, type, account, category, description, amount, quantity)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (submitter_name, income_type, account, category, description, amount, quantity))
-
-            # Calculate total_amount here if needed for other purposes
-            total_amount = amount * quantity
+            """, (user_id, submitter_name, income_type, account, category, description, amount, quantity))
 
             # Update user balance
             balance_column = f"{account}_balance"
@@ -476,19 +492,19 @@ def add_income(submitter_name, income_type, account, category, description, amou
                 UPDATE users
                 SET {balance_column} = COALESCE({balance_column}, 0) + ?,
                     total_income = COALESCE(total_income, 0) + ?
-                WHERE username = ?
-            """, (total_amount, total_amount, submitter_name))
+                WHERE id = ?
+            """, (total_amount, total_amount, user_id))
 
             conn.commit()
-            update_profit(submitter_name)
-            print("Income added and balances updated successfully!")
-        
+            flash("Income added successfully!", "success")
+
         except sqlite3.Error as e:
-            print(f"Error inserting income or updating balances: {e}")
+            flash(f"Error inserting income: {e}", "error")
             conn.rollback()
         finally:
             cursor.close()
             conn.close()
+
 @app.route('/income', methods=['GET', 'POST'])
 def income():
     if request.method == 'POST':
@@ -507,7 +523,6 @@ def income():
 
             add_income(submitter_name, income_type, account, category, description, amount, quantity)
 
-            flash("Income added successfully!", "success")
             return redirect('/income')
 
         except (KeyError, ValueError):
@@ -517,12 +532,13 @@ def income():
 
     return render_template('income.html')
 
+# Function to calculate total income
 def sum_total_income():
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
         try:
-            cursor.execute("SELECT COALESCE(SUM(total_amount), 0) FROM transactions WHERE type='income'")
+            cursor.execute("SELECT COALESCE(SUM(amount * quantity), 0) FROM transactions WHERE type='income'")
             return cursor.fetchone()[0]
         except sqlite3.Error as e:
             print(f"Error calculating total income: {e}")
