@@ -1,27 +1,34 @@
-from flask import Flask, render_template, request
-from flask_mail import Mail, Message
+import sqlite3
 
-app = Flask(__name__)
+def run_sql_commands():
+    # Connect to the SQLite database
+    conn = sqlite3.connect('mydatabase.db')
+    cursor = conn.cursor()
 
-# Flask Mail Configuration
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'your-email@gmail.com'
-app.config['MAIL_PASSWORD'] = 'your-app-password'
-app.config['MAIL_DEFAULT_SENDER'] = 'your-email@gmail.com'
+    # Example SQL command to create a table
+    create_table_sql = """
+    CREATE TABLE IF NOT EXISTS transactions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        type TEXT NOT NULL,
+        account TEXT NOT NULL,
+        category TEXT NOT NULL,
+        description TEXT,
+        amount REAL NOT NULL,
+        quantity INTEGER NOT NULL,
+        total_amount REAL GENERATED ALWAYS AS (amount * quantity) STORED
+    );
+    """
 
-mail = Mail(app)
+    try:
+        cursor.execute(create_table_sql)
+        conn.commit()
+        print("Table created successfully.")
+    except sqlite3.Error as e:
+        print(f"An error occurred: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
-@app.route('/send-mail', methods=['GET', 'POST'])
-def send_mail():
-    if request.method == 'POST':
-        msg = Message("Test Email", sender=app.config['MAIL_DEFAULT_SENDER'], recipients=["recipient@example.com"])
-        msg.body = "Hello, this is a test email!"
-        mail.send(msg)
-        return "Email Sent Successfully!"
-
-    return render_template("send_mail.html")
-
-if __name__ == '__main__':
-    app.run(debug=True)
+# Run the function
+run_sql_commands()
