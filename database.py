@@ -24,6 +24,21 @@ def create_database():
                 total_income REAL DEFAULT 0.0
             )
         """)
+        # Create 'expenses' table if not already created
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS expenses (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                expense_type TEXT NOT NULL,
+                account TEXT NOT NULL,
+                category TEXT NOT NULL,
+                description TEXT,
+                amount REAL NOT NULL,
+                quantity INTEGER NOT NULL,
+                user_id INTEGER,
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            )
+        """)
 
         # Create 'income_categories' table
         cursor.execute("""
@@ -81,3 +96,4 @@ def create_database():
 
 # Call the function to create the database
 create_database()
+
