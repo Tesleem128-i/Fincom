@@ -1,4 +1,4 @@
-/* General Styles */
+/* ================= General Styles ================= */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -9,18 +9,31 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
-/* Header */
+/* ================= Header ================= */
 header {
     background-color: #222;
     padding: 20px 0;
 }
 
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Logo */
+.logo img {
+    width: 120px;
+    height: auto;
+}
+
+/* Navbar Title */
 header h1 {
     font-size: 24px;
     color: #f4b400;
 }
 
-/* Signup Container */
+/* ================= Signup Form ================= */
 .signup-container {
     width: 400px;
     margin: 50px auto;
@@ -82,12 +95,16 @@ header h1 {
     display: none;
 }
 
-/* Customer Type Selection */
+/* ================= Customer Type Selection ================= */
 .customer-type {
     display: flex;
     justify-content: center;
     gap: 15px;
     margin: 15px 0;
+}
+
+.customer-type input {
+    display: none;
 }
 
 .customer-type label {
@@ -98,16 +115,12 @@ header h1 {
     transition: background 0.3s;
 }
 
-.customer-type input {
-    display: none;
-}
-
 .customer-type input:checked + label {
     background: #f4b400;
     color: #222;
 }
 
-/* Background Slideshow */
+/* ================= Background Slideshow ================= */
 .background-slideshow {
     position: fixed;
     top: 0;
@@ -123,12 +136,12 @@ header h1 {
 @keyframes slide {
     0% { background-image: url('../img/slide1.png'); }
     25% { background-image: url('../img/slide2.jpg'); }
-    50% { background-image: url('../img/slide3.jpg'); }
+    50% { background-image: url('../img/slide4.webp'); }
     75% { background-image: url('../img/slide4.jpg'); }
     100% { background-image: url('../img/slide1.png'); }
 }
 
-/* Responsive Design */
+/* ================= Responsive Design ================= */
 @media (max-width: 600px) {
     .signup-container {
         width: 90%;
