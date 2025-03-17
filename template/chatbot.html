@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial AI Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .chat-container { width: 50%; margin: auto; border: 1px solid #ddd; padding: 10px; border-radius: 10px; }
+        .message { padding: 10px; margin: 5px 0; border-radius: 5px; }
+        .user { background-color: #e0f7fa; text-align: left; }
+        .bot { background-color: #e8f5e9; text-align: left; }
+    </style>
+    <script>
+        async function sendMessage() {
+            let userMessage = document.getElementById("userInput").value;
+            if (!userMessage) return;
+
+            let response = await fetch("/chatbot", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userMessage })
+            });
+
+            let data = await response.json();
+
+            // Display chat history
+            let chatbox = document.getElementById("chatbox");
+            chatbox.innerHTML += `<div class="message user"><b>You:</b> ${userMessage}</div>`;
+            chatbox.innerHTML += `<div class="message bot"><b>Bot:</b> ${data.response} (Sentiment: ${data.sentiment})</div>`;
+
+            document.getElementById("userInput").value = "";  // Clear input
+        }
+    </script>
+</head>
+<body>
+    <h1>Financial AI Chatbot</h1>
+    <div class="chat-container">
+        <div id="chatbox"></div>
+        <input type="text" id="userInput" placeholder="Ask about finance..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</body>
+</html>
