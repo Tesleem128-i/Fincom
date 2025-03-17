@@ -162,3 +162,12 @@ header h1 {
         align-items: center;
     }
 }
+select {
+    color: black; /* Ensures the text is visible */
+    background-color: white; /* Sets a clear background */
+    border: 1px solid #ccc; /* Adds a light border */
+    padding: 5px;
+}
+option {
+    color: black; /* Ensures the options are visible */
+}
