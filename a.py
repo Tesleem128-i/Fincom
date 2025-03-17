@@ -1,34 +1,14 @@
-from flask import Flask, render_template, request, redirect, session, flash
-import mysql.connector
-from mysql.connector import Error
-from flask_bcrypt import Bcrypt
-import re
-from flask_mail import Mail, Message
-import random
+import sqlite3
 
-app = Flask(__name__, template_folder='.')
-bcrypt = Bcrypt(app)
-app.secret_key = "your_secret_key"
+# Connect to SQLite database
+conn = sqlite3.connect("mydatabase.db")
+cursor = conn.cursor()
 
+# Alter table to add currency column
+cursor.execute("ALTER TABLE users ADD COLUMN currency TEXT;")
 
-# Configure Flask-Mail
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = 'muhammedtesleemolatundun.com'  # Your email address
-app.config['MAIL_PASSWORD'] = 'csqv yavo jcwj bghz'  # Your email password
-app.config['MAIL_DEFAULT_SENDER'] = 'projectfinodido@gmail.com'  # Default sender
+# Commit and close
+conn.commit()
+conn.close()
 
-mail = Mail(app)
-def get_db_connection():
-    try:
-        return mysql.connector.connect(
-            host="localhost",
-            user="Teslim",
-            password="Tesleem@123",
-            database="mydatabase"
-        )
-    except Error as e:
-        print(f"Error connecting to database: {e}")
-        return None 
+print("Column 'currency' added successfully!")
