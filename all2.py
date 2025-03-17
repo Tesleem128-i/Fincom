@@ -724,7 +724,78 @@ def Business_advice():
 
 
 
+@app.route('/Analysis')
+def Analysis():
+    return render_template('Analysis.html')
 
+@app.route('/IncomeOverview')  
+def income_flow():
+    return render_template('IncomeOverview.html')
+
+@app.route('/ExpenseOverview')
+def expense_flow(): 
+    return render_template("ExpenseOverview.html")
+
+@app.route('/api/expenses', methods=['GET'])
+def fetch_expenses():
+    # Ensure the user is logged in
+    if 'user_id' not in session:
+        return jsonify({"error": "Unauthorized access"}), 401
+
+    user_id = session['user_id']  # Get the logged-in user's ID
+    conn = sqlite3.connect("mydatabase.db")
+    cursor = conn.cursor()
+
+    date_filter = request.args.get('month')  # e.g., '2025-03'
+    query = """
+        SELECT category, SUM(amount * quantity) AS total_amount
+        FROM transactions
+        WHERE type = 'expense' AND user_id = ?
+    """
+    params = [user_id]  # Add user_id to the parameters
+    if date_filter:
+        query += " AND strftime('%Y-%m', created_at) = ?"
+        params.append(date_filter)
+
+    query += " GROUP BY category"
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    
+    # Format data into JSON
+    data = [{"category": row[0], "amount": row[1]} for row in rows]
+    conn.close()
+    return jsonify(data)
+
+@app.route('/api/income', methods=['GET'])
+def fetch_income():
+    # Ensure the user is logged in
+    if 'user_id' not in session:
+        return jsonify({"error": "Unauthorized access"}), 401
+
+    user_id = session['user_id']  # Get the logged-in user's ID
+    conn = sqlite3.connect("mydatabase.db")
+    cursor = conn.cursor()
+
+    # Optional: Filter by month or date range
+    date_filter = request.args.get('month')  # e.g., '2025-03' for March 2025
+    query = """
+        SELECT category, SUM(amount * quantity) AS total_amount
+        FROM transactions
+        WHERE type = 'income' AND user_id = ?
+    """
+    params = [user_id]  # Add user_id to the parameters
+    if date_filter:
+        query += " AND strftime('%Y-%m', created_at) = ?"
+        params.append(date_filter)
+
+    query += " GROUP BY category"
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    
+    # Structure data for JSON response
+    data = [{"category": row[0], "amount": row[1]} for row in rows]
+    conn.close()
+    return jsonify(data)
 
 @app.route('/logout')
 def logout():

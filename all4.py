@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, flash, jsonify
+from flask import Flask, render_template, request, redirect, session, flash, jsonify,url_for
 import mysql.connector
 from mysql.connector import Error
 from flask_bcrypt import Bcrypt
@@ -34,6 +34,11 @@ def get_db_connection():
     except sqlite3.Error as e:
         print(f"Database connection failed: {e}")
         return None
+    
+
+
+
+
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -596,6 +601,7 @@ def update_profit(user_id):
             conn.close()
 
 @app.route('/get_profit')
+
 def profit_page():
     """Display the profit for the logged-in user."""
     user_id = session.get('user_id')
@@ -625,6 +631,69 @@ def profit_page():
         cursor.close()
         conn.close()
 
+@app.route('/Analysis')
+def Analysis():
+    return render_template('Analysis.html')
+
+@app.route('/IncomeOverview')  
+def income_flow():
+    return render_template('IncomeOverview.html')
+
+@app.route('/ExpenseOverview')
+def expense_flow(): 
+    return render_template("ExpenseOverview.html")
+
+@app.route('/api/expenses', methods=['GET'])
+def fetch_expenses():
+    conn = sqlite3.connect("mydatabase.db")
+    cursor = conn.cursor()
+
+    date_filter = request.args.get('month')  # e.g., '2025-03'
+    query = """
+        SELECT category, SUM(amount * quantity) AS total_amount
+        FROM transactions
+        WHERE type = 'expense'
+    """
+    params = []
+    if date_filter:
+        query += " AND strftime('%Y-%m', created_at) = ?"
+        params.append(date_filter)
+
+    query += " GROUP BY category"
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    
+    # Format data into JSON
+    data = [{"category": row[0], "amount": row[1]} for row in rows]
+    conn.close()
+    return jsonify(data)
+
+@app.route('/api/income', methods=['GET'])
+def fetch_income():
+    conn = sqlite3.connect("mydatabase.db")
+    cursor = conn.cursor()
+
+    # Optional: Filter by month or date range
+    date_filter = request.args.get('month')  # e.g., '2025-03' for March 2025
+    query = """
+        SELECT category, SUM(amount * quantity) AS total_amount
+        FROM transactions
+        WHERE type = 'income'
+    """
+    params = []
+    if date_filter:
+        query += " AND strftime('%Y-%m', created_at) = ?"
+        params.append(date_filter)
+
+    query += " GROUP BY category"
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    
+    # Structure data for JSON response
+    data = [{"category": row[0], "amount": row[1]} for row in rows]
+    conn.close()
+    return jsonify(data)
+
 @app.route('/logout')
 def logout():
     session.clear()
@@ -633,3 +702,4 @@ def logout():
 
 if __name__ == '__main__':
     app.run(debug=True)
+

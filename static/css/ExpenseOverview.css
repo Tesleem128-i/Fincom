@@ -1,0 +1,213 @@
+/* General Page Style */
+body {
+    background-color: black; /* Background color of the page */
+    color: #f4b400; /* Golden yellow text color */
+    font-family: Arial, sans-serif; /* Clean font */
+    margin: 0;
+    padding: 0;
+}
+
+/* Main Container */
+.container {
+    max-width: 800px; /* Wider for analysis sections */
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #222; /* Dark gray box background */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+/* Headings */
+h1, h2 {
+    color: #f4b400; /* Gold color for headings */
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h2 {
+    border-bottom: 2px solid #f4b400; /* Gold underline */
+    padding-bottom: 5px;
+}
+
+/* Section Styling */
+section {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #333; /* Slightly lighter for sections */
+    border-radius: 8px;
+}
+
+/* Placeholder Chart Box */
+.chart-placeholder {
+    width: 100%;
+    height: 300px; /* Height for the chart placeholder */
+    background-color: #444; /* Mid-gray placeholder */
+    color: #f4b400; /* Gold text */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background-color: #333; /* Table background */
+    color: #f4b400; /* Gold text */
+}
+
+th, td {
+    border: 1px solid #444; /* Subtle border */
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #222; /* Darker header background */
+    color: #f4b400; /* Gold text */
+}
+
+/* Buttons */
+button {
+    background-color: brown; /* Button background color */
+    color: white; /* Button text color */
+    padding: 10px 20px; /* Button padding */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Button font size */
+    transition: background-color 0.3s; /* Smooth background color transition */
+    margin-top: 10px; /* Space above buttons */
+}
+
+button:hover {
+    background-color: #a52a2a; /* Darker brown on hover */
+}
+
+/* Back Button */
+.back-button {
+    background-color: orange; /* Back button background color */
+    margin-right: 10px; /* Space to the right */
+}
+
+.back-button:hover {
+    background-color: #ff8c00; /* Darker orange on hover */
+}
+
+/* Flash Message */
+.flash-message {
+    margin: 10px 0; /* Margin above and below */
+    padding: 10px; /* Padding inside the message */
+    border-radius: 4px; /* Rounded corners */
+    color: white; /* Text color */
+}
+
+.flash-success {
+    background-color: #4caf50; /* Green for success messages */
+}
+
+.flash-error {
+    background-color: #f44336; /* Red for error messages */
+}
+
+/* Expense Table */
+.expense-table {
+    width: 100%; /* Full width */
+    border-collapse: collapse; /* Collapse borders */
+    text-align: left; /* Left align text */
+}
+
+/* Form Styles */
+form {
+    margin-top: 20px; /* Space above the form */
+    padding: 20px; /* Padding inside the form */
+    background-color: #333; /* Form background */
+    border-radius: 8px; /* Rounded corners */
+}
+
+input[type="text"],
+input[type="number"],
+textarea {
+    width: 100%; /* Full width inputs */
+    padding: 10px; /* Padding inside inputs */
+    margin-bottom: 10px; /* Space below inputs */
+    border: 1px solid #444; /* Border color */
+    border-radius: 4px; /* Rounded corners */
+    background-color: #222; /* Input background */
+    color: #f4b400; /* Text color */
+}
+
+/* Input Focus States */
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+    border-color: #f4b400; /* Gold border on focus */
+    outline: none; /* Remove default outline */
+}
+
+/* Textarea */
+textarea {
+    height: 100px; /* Set a default height for textareas */
+    resize: vertical; /* Allow vertical resizing */
+}
+
+/* Submit Button */
+input[type="submit"],
+button.submit {
+    background-color: #4caf50; /* Green for submit buttons */
+    color: white; /* White text */
+    padding: 10px 20px; /* Padding */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+input[type="submit"]:hover,
+button.submit:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+/* List Styles */
+ul {
+    list-style-type: none; /* Remove default list styling */
+    padding: 0; /* Remove padding */
+}
+
+li {
+    background-color: #444; /* Background for list items */
+    color: #f4b400; /* Gold text */
+    padding: 10px; /* Padding inside list items */
+    margin-bottom: 10px; /* Space between list items */
+    border-radius: 4px; /* Rounded corners */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px; /* Less padding on smaller screens */
+    }
+
+    h1 {
+        font-size: 2.5em; /* Smaller font size for headings */
+    }
+
+    h2 {
+        font-size: 1.8em; /* Smaller subheading */
+    }
+
+    button,
+    input[type="submit"] {
+        padding: 8px 16px; /* Adjust button padding */
+        font-size: 14px; /* Smaller font size for buttons */
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea {
+        padding: 8px; /* Adjust input padding */
+    }
+}
