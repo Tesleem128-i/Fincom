@@ -1,5 +1,6 @@
 # Load model directly
-from transformers import AutoTokenizer, AutoModelForQuestionAnswering
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch
 
-tokenizer = AutoTokenizer.from_pretrained("distilbert/distilbert-base-uncased-distilled-squad")
-model = AutoModelForQuestionAnswering.from_pretrained("distilbert/distilbert-base-uncased-distilled-squad")
+tokenizer = AutoTokenizer.from_pretrained("mistralai/Mixtral-8x7B-v0.1")
+model = AutoModelForCausalLM.from_pretrained("mistralai/Mixtral-8x7B-v0.1", torch_dtype=torch.float16,device_map="auto")
