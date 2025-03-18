@@ -1,59 +1,231 @@
+body {
+  background-color: black;
+  color: #f4b400;
+  font-family: Arial, sans-serif;
+}
 
-    body {
-      background-color: black;
-      color: #f4b400;
-      font-family: Arial, sans-serif;
-    }
-    .container {
-      max-width: 500px;
-      margin: 50px auto;
-      padding: 20px;
-      background-color: #222;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 4px;
-      background-color: #333;
-      color: #f4b400;
-    }
-    button {
-      background-color: brown;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s;
-      margin-top: 10px; /* Add some space above the button */
-    }
-    button:hover {
-      background-color: #a52a2a;
-    }
-    .back-button {
-      background-color: orange; /* Orange color for the back button */
-    }
-    .back-button:hover {
-      background-color: #ff8c00; /* Darker orange on hover */
-    }
-    .flash-message {
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 4px;
-      color: white;
-    }
-    .flash-success {
-      background-color: #4caf50;
-    }
-    .flash-error {
-      background-color: #f44336;
-    }
-    label {
-      font-weight: bold;
-    }
-  
+.container {
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #222;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 4px;
+  background-color: #333;
+  color: #f4b400;
+}
+
+button {
+  background-color: brown;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #a52a2a;
+}
+
+.back-button {
+  background-color: orange;
+}
+
+.back-button:hover {
+  background-color: #ff8c00;
+}
+
+.flash-message {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 4px;
+  color: white;
+}
+
+.flash-success {
+  background-color: #4caf50;
+}
+
+.flash-error {
+  background-color: #f44336;
+}
+
+label {
+  font-weight: bold;
+}
+
+/* Account Selection */
+.custom-select {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.account-icon {
+  width: 30px;
+  height: 30px;
+  margin-left: 10px;
+  display: none;
+}
+
+/* Dropdown Styling */
+.dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown-selected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #ffcc00;
+  padding: 10px;
+  cursor: pointer;
+  background-color: #222;
+  border-radius: 5px;
+}
+
+.dropdown-selected img {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+.dropdown-options {
+  position: absolute;
+  width: 100%;
+  display: none;
+  background: #222;
+  border: 1px solid #ccc;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dropdown-option {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdown-option img {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+.dropdown-option:hover {
+  background-color: #ffcc00;
+}
+.dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown-selected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #ffcc00;
+  padding: 10px;
+  cursor: pointer;
+  background-color: #222;
+}
+
+.dropdown-selected img {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+.dropdown-options {
+  display: none;
+  position: absolute;
+  width: 100%;
+  background: #222;
+  border: 1px solid #ccc;
+  z-index: 100;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dropdown-option {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdown-option:hover {
+  background-color: #ffcc00;
+}
+
+.dropdown-option img {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+/* Slideshow Background */
+.slideshow-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1; /* Ensure it stays behind other content */
+}
+
+.slideshow-background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+/* Show first image */
+.slideshow-background img:first-child {
+  opacity: 1;
+}
+
+/* Animation for slideshow */
+@keyframes slideshow {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  30% { opacity: 1; }
+  40% { opacity: 0; }
+}
+
+.slideshow-background img {
+  animation: slideshow 20s infinite; /* Adjust duration as needed */
+}
+
+/* Adjust timing for each image */
+.slideshow-background img:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.slideshow-background img:nth-child(2) {
+  animation-delay: 10s; /* Show second image after 10 seconds */
+}
+
+.slideshow-background img:nth-child(3) {
+  animation-delay: 20s; /* Show third image after 20 seconds */
+}

@@ -6,10 +6,13 @@
   <title>Add Expense</title>
   <link rel="stylesheet" href="../static/css/expenses.css">
   <link rel="icon" type="image/webp" href="../static/img/logo.webp">
+
+  </style>
 </head>
 <body>
   <div class="container">
     <h2>Add Expense</h2>
+    
     <!-- Display Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -26,24 +29,59 @@
       <label for="expense_type">Type:</label>
       <input type="text" name="expense_type" id="expense_type" value="expense" readonly>
       
+    
       <label for="account">Account:</label>
-      <select name="account" id="account" required>
-          <option value="" disabled selected>Select an account</option>
-          <option value="cash">Cash</option>
-          <option value="card">Card</option>
-          <option value="savings">savings</option>
-      </select>
+<div class="dropdown">
+  <div class="dropdown-selected" onclick="toggleAccountDropdown()">
+    <img id="selectedAccountImg" src="../static/img/cash.webp" alt="Account">
+    <span id="selectedAccountText">Select an account</span>
+  </div>
+  <div class="dropdown-options" id="accountDropdownOptions">
+    <div class="dropdown-option" onclick="selectAccount('cash', '../static/img/cash.webp')">
+      <img src="../static/img/cash.webp" alt="Cash"> Cash
+    </div>
+    <div class="dropdown-option" onclick="selectAccount('card', '../static/img/bank.webp')">
+      <img src="../static/img/bank.webp" alt="Card"> Card
+    </div>
+    <div class="dropdown-option" onclick="selectAccount('savings', '../static/img/savings.webp')">
+      <img src="../static/img/savings.webp" alt="Savings"> Savings
+    </div>
+  </div>
+  <input type="hidden" name="account" id="account">
+</div>
+
+
+
+
+
+
       
       <label for="category">Category:</label>
-      <select name="category" id="category" required>
-          <option value="" disabled selected>Select a category</option>
-          <option value="rent">Rent</option>
-          <option value="utilities">Utilities</option>
-          <option value="groceries">Groceries</option>
-          <option value="transportation">Transportation</option>
-          <option value="entertainment">Entertainment</option>
-      </select>
-      
+      <div class="dropdown">
+        <div class="dropdown-selected" onclick="toggleDropdown()">
+          <img id="selectedCategoryImg" src="../static/img/categories.webp" alt="Category">
+          <span id="selectedCategoryText">Select a category</span>
+        </div>
+        <div class="dropdown-options" id="dropdownOptions">
+          <div class="dropdown-option" onclick="selectCategory('rent', '../static/img/rent.png')">
+            <img src="../static/img/rent.webp" alt="Rent"> Rent
+          </div>
+          <div class="dropdown-option" onclick="selectCategory('utilities', '../static/img/utilities.png')">
+            <img src="../static/img/utilities.webp" alt="Utilities"> Utilities
+          </div>
+          <div class="dropdown-option" onclick="selectCategory('groceries', '../static/img/groceries.png')">
+            <img src="../static/img/groceries.webp" alt="Groceries"> Groceries
+          </div>
+          <div class="dropdown-option" onclick="selectCategory('transportation', '../static/img/transportation.png')">
+            <img src="../static/img/transportation.webp" alt="Transportation"> Transportation
+          </div>
+          <div class="dropdown-option" onclick="selectCategory('entertainment', '../static/img/entertainment.png')">
+            <img src="../static/img/entertainment.webp" alt="Entertainment"> Entertainment
+          </div>
+        </div>
+        <input type="hidden" name="category" id="category">
+      </div>
+
       <label for="description">Description:</label>
       <textarea name="description" id="description" placeholder="Describe your expense" rows="3" required></textarea>
       
@@ -56,6 +94,64 @@
       <button type="submit">Add Expense</button>
       <button type="button" class="back-button" onclick="window.history.back();">Back</button> <!-- Back button -->
     </form>
-  
+  </div>
+
+  <script>
+    function toggleDropdown() {
+      let dropdown = document.getElementById("dropdownOptions");
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    }
+
+    function selectCategory(category, imageSrc) {
+      document.getElementById("selectedCategoryText").innerText = category.charAt(0).toUpperCase() + category.slice(1);
+      document.getElementById("selectedCategoryImg").src = imageSrc;
+      document.getElementById("category").value = category;
+      document.getElementById("dropdownOptions").style.display = "none";
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function(event) {
+      let dropdown = document.getElementById("dropdownOptions");
+      let selected = document.querySelector(".dropdown-selected");
+      if (!dropdown.contains(event.target) && !selected.contains(event.target)) {
+        dropdown.style.display = "none";
+      }
+    });
+    
+      function updateAccountImage() {
+          var select = document.getElementById("account");
+          var selectedOption = select.options[select.selectedIndex];
+          var imgElement = document.getElementById("account-image");
+    
+          if (selectedOption.dataset.image) {
+              imgElement.src = selectedOption.dataset.image;
+              imgElement.style.display = "inline";
+          } else {
+              imgElement.style.display = "none";
+          }
+      }
+      function toggleAccountDropdown() {
+        let dropdown = document.getElementById("accountDropdownOptions");
+        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+      }
+      
+      function selectAccount(account, imageSrc) {
+        document.getElementById("selectedAccountText").innerText = account.charAt(0).toUpperCase() + account.slice(1);
+        document.getElementById("selectedAccountImg").src = imageSrc;
+        document.getElementById("account").value = account;
+        document.getElementById("accountDropdownOptions").style.display = "none";
+      }
+      
+      // Close dropdown when clicking outside
+      document.addEventListener("click", function(event) {
+        let dropdown = document.getElementById("accountDropdownOptions");
+        let selected = document.querySelector(".dropdown-selected");
+        if (!dropdown.contains(event.target) && !selected.contains(event.target)) {
+          dropdown.style.display = "none";
+        }
+      });
+      
+    
+  </script>
 </body>
 </html>
