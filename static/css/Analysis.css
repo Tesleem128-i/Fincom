@@ -31,13 +31,13 @@ h1 {
   font-size: 3em;
   margin-bottom: 20px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  color: #00bfff; /* Bright blue for main heading */
+  color: #002147; /* Classic Navy Blue */
 }
 
 h2 {
   font-size: 2em;
   margin: 20px 0 10px;
-  color: #ffcc00; /* Orange for subheadings */
+  color: #FFD700; /* Classic Gold */
 }
 
 /* Paragraphs */
@@ -55,7 +55,7 @@ input, select, textarea {
   border: none;
   border-radius: 8px;
   background-color: #444;
-  color: #f4b400;
+  color: #FFD700;
   font-size: 16px;
   transition: background 0.3s;
 }
@@ -67,7 +67,7 @@ input:focus, select:focus, textarea:focus {
 
 /* Buttons */
 button {
-  background: linear-gradient(90deg, #00bfff, #1e90ff);
+  background: linear-gradient(90deg, #002147, #0056b3);
   color: white;
   padding: 16px 32px;
   border: none;
@@ -80,7 +80,7 @@ button {
 }
 
 button:hover {
-  background: linear-gradient(90deg, #1e90ff, #00bfff);
+  background: linear-gradient(90deg, #0056b3, #002147);
   transform: scale(1.05);
 }
 
