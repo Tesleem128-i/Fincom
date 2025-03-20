@@ -1,29 +1,28 @@
+from start_model import model, tokenizer
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, AutoModelForSeq2SeqLM
-from start_model import tokenizer, model
-import sqlite3 
-# Load model directly
-def get_response(prompt):
-    inputs = tokenizer(prompt,return_tensors="pt")
-    with torch.no_grad():
-        output = model.generate(**inputs, max_length=150)
-    return tokenizer.decode(output[0], skip_special_tokens=True)
 
-def fetch_from_database(user_query):
-    db = sqlite3.connect('mydatabase.db')
-    cursor = db.cursor()
-import sqlite3
+def generate_response(prompt, max_length=50):  # Reduce max_length
+    """Generates a response using GPT-2 with optimized settings."""
+    inputs = tokenizer(prompt, return_tensors="pt")
+    outputs = model.generate(inputs.input_ids, max_length=max_length, 
+                             temperature=0.7, top_k=50, top_p=0.8, 
+                             no_repeat_ngram_size=3, pad_token_id=tokenizer.eos_token_id)
+    return tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-def fetch_from_database(user_query):
-    """Searches the SQLite3 database for relevant information"""
-    db = sqlite3.connect("fincom_web_info.db")  # Path to your SQLite database
-    cursor = db.cursor()
+# Interactive chatbot loop with history
+conversation_history = []
 
-    # Example: Searching for financial advice related to the query
-    cursor.execute("SELECT advice FROM financial_data WHERE keywords LIKE ?", (f"%{user_query}%",))
-    result = cursor.fetchone()
+while True:
+    user_input = input("You: ")
+    if user_input.lower() in ["exit", "quit"]:
+        print("Goodbye!")
+        break
 
-    db.close()
-    
-    return result[0] if result else "I couldn't find relevant info in the datab"
-print(get_response("What is money?"))
+    # Maintain conversation context
+    conversation_history.append(f"You: {user_input}")
+    context = " ".join(conversation_history[-3:])  # Keep only the last 3 exchanges
+
+    response = generate_response(context)
+    conversation_history.append(f"GPT-2: {response}")
+
+    print("GPT-2:", response)
