@@ -21,7 +21,7 @@ app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = 'projectfinodido@gmail.com'  # Your email address
 app.config['MAIL_PASSWORD'] = 'csqv yavo jcwj bghz'  # Your email password
 app.config['MAIL_DEFAULT_SENDER'] = 'FINCOM'  # 
-
+ 
 
 mail = Mail(app)
 def get_db_connection():
@@ -235,6 +235,8 @@ def login():
 
             if user:
                 user_id, db_username, stored_password, customer_type = user
+                print(f"User found: {db_username}, {stored_password}, {customer_type}")  # Debug print
+
                 if bcrypt.check_password_hash(stored_password, password):
                     # Store user info in session
                     session['user_id'] = user_id
@@ -247,11 +249,14 @@ def login():
                     return redirect('/home1' if customer_type.lower() == 'individual' else '/home')
                 else:
                     flash("Invalid password!", "error")
+                    print("Invalid password")  # Debug print
             else:
                 flash("User not found!", "error")
+                print("User not found")  # Debug print
 
         except sqlite3.Error as e:
             flash(f"An error occurred: {e}", "error")
+            print(f"Database error: {e}")  # Debug print
         finally:
             cursor.close()
             conn.close()
@@ -262,17 +267,7 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/some_action')
-def some_action():
-    return "You chose Action 1!"
 
-@app.route('/another_action')
-def another_action():
-    return "You chose Action 2!"
-
-@app.route('/yet_another_action')
-def yet_another_action():
-    return "You chose Action 3!"
 
 def generate_welcome_message(username, customer_type):
     if customer_type.lower() == "individual":
@@ -344,19 +339,9 @@ def balances():
         cursor.close()
         conn.close()
         
-def get_db_connection():
-    """Establish a connection to the SQLite database with error handling."""
-    try:
-        conn = sqlite3.connect("mydatabase.db")
-        conn.row_factory = sqlite3.Row  # Allows accessing columns by name
-        return conn
-    except sqlite3.Error as e:
-        print(f"Database connection failed: {e}")
-        return None
 
 
-def get_db_connection():
-    return sqlite3.connect('mydatabase.db')
+
 
 def update_profit(username):
     conn = get_db_connection()
@@ -554,15 +539,7 @@ def total_income():
 
 
 
-def get_db_connection():
-    """Establish a connection to the SQLite database with error handling."""
-    try:
-        conn = sqlite3.connect("mydatabase.db")
-        conn.row_factory = sqlite3.Row  # Allows accessing columns by name
-        return conn
-    except sqlite3.Error as e:
-        print(f"Database connection failed: {e}")
-        return None
+
 
 def update_profit(user_id):
     """Calculate and update profit based on transactions for a user."""
