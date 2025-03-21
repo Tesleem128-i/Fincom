@@ -1,7 +1,7 @@
 /* General Page Style */
 body {
-    background-color: black; /* Background color of the page */
-    color: #f4b400; /* Golden yellow text color */
+    background-color: #F5F5F5; /* Light Gray Background */
+    color: #002147; /* Navy Blue Text */
     font-family: Arial, sans-serif; /* Clean font */
     margin: 0;
     padding: 0;
@@ -12,20 +12,20 @@ body {
     max-width: 800px; /* Wider for analysis sections */
     margin: 50px auto;
     padding: 20px;
-    background-color: #222; /* Dark gray box background */
+    background-color: white; /* White Box Background */
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft Shadow */
 }
 
 /* Headings */
 h1, h2 {
-    color: #f4b400; /* Gold color for headings */
+    color: #002147; /* Navy Blue */
     text-align: center;
     margin-bottom: 20px;
 }
 
 h2 {
-    border-bottom: 2px solid #f4b400; /* Gold underline */
+    border-bottom: 2px solid #FFD700; /* Gold Underline */
     padding-bottom: 5px;
 }
 
@@ -33,7 +33,7 @@ h2 {
 section {
     margin-bottom: 20px;
     padding: 20px;
-    background-color: #333; /* Slightly lighter for sections */
+    background-color: #EAEAEA; /* Light Gray Sections */
     border-radius: 8px;
 }
 
@@ -41,8 +41,8 @@ section {
 .chart-placeholder {
     width: 100%;
     height: 300px; /* Height for the chart placeholder */
-    background-color: #444; /* Mid-gray placeholder */
-    color: #f4b400; /* Gold text */
+    background-color: #CCCCCC; /* Mid-gray Placeholder */
+    color: #002147; /* Navy Blue Text */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -54,160 +54,161 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
-    background-color: #333; /* Table background */
-    color: #f4b400; /* Gold text */
+    background-color: white; /* Table Background */
+    color: #002147; /* Navy Blue Text */
 }
 
 th, td {
-    border: 1px solid #444; /* Subtle border */
+    border: 1px solid #CCCCCC; /* Subtle Border */
     padding: 10px;
     text-align: left;
 }
 
 th {
-    background-color: #222; /* Darker header background */
-    color: #f4b400; /* Gold text */
+    background-color: #FFD700; /* Gold Header Background */
+    color: #002147; /* Navy Blue Text */
 }
 
 /* Buttons */
 button {
-    background-color: brown; /* Button background color */
-    color: white; /* Button text color */
-    padding: 10px 20px; /* Button padding */
-    border: none; /* No border */
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    font-size: 16px; /* Button font size */
-    transition: background-color 0.3s; /* Smooth background color transition */
-    margin-top: 10px; /* Space above buttons */
+    background-color: #002147; /* Navy Blue Button */
+    color: white; /* Button Text Color */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    margin-top: 10px;
 }
 
 button:hover {
-    background-color: #a52a2a; /* Darker brown on hover */
+    background-color: #004080; /* Darker Navy Blue on Hover */
 }
 
 /* Back Button */
 .back-button {
-    background-color: orange; /* Back button background color */
-    margin-right: 10px; /* Space to the right */
+    background-color: #FFD700; /* Gold Back Button */
+    color: #002147; /* Navy Blue Text */
+    margin-right: 10px;
 }
 
 .back-button:hover {
-    background-color: #ff8c00; /* Darker orange on hover */
+    background-color: #CCAC00; /* Darker Gold on Hover */
 }
 
 /* Flash Message */
 .flash-message {
-    margin: 10px 0; /* Margin above and below */
-    padding: 10px; /* Padding inside the message */
-    border-radius: 4px; /* Rounded corners */
-    color: white; /* Text color */
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 4px;
+    color: white;
 }
 
 .flash-success {
-    background-color: #4caf50; /* Green for success messages */
+    background-color: #4CAF50; /* Green for Success Messages */
 }
 
 .flash-error {
-    background-color: #f44336; /* Red for error messages */
+    background-color: #F44336; /* Red for Error Messages */
 }
 
 /* Expense Table */
 .expense-table {
-    width: 100%; /* Full width */
-    border-collapse: collapse; /* Collapse borders */
-    text-align: left; /* Left align text */
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
 }
 
 /* Form Styles */
 form {
-    margin-top: 20px; /* Space above the form */
-    padding: 20px; /* Padding inside the form */
-    background-color: #333; /* Form background */
-    border-radius: 8px; /* Rounded corners */
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #EAEAEA; /* Light Gray Form Background */
+    border-radius: 8px;
 }
 
 input[type="text"],
 input[type="number"],
 textarea {
-    width: 100%; /* Full width inputs */
-    padding: 10px; /* Padding inside inputs */
-    margin-bottom: 10px; /* Space below inputs */
-    border: 1px solid #444; /* Border color */
-    border-radius: 4px; /* Rounded corners */
-    background-color: #222; /* Input background */
-    color: #f4b400; /* Text color */
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    background-color: white;
+    color: #002147; /* Navy Blue Text */
 }
 
 /* Input Focus States */
 input[type="text"]:focus,
 input[type="number"]:focus,
 textarea:focus {
-    border-color: #f4b400; /* Gold border on focus */
-    outline: none; /* Remove default outline */
+    border-color: #FFD700; /* Gold Border on Focus */
+    outline: none;
 }
 
 /* Textarea */
 textarea {
-    height: 100px; /* Set a default height for textareas */
-    resize: vertical; /* Allow vertical resizing */
+    height: 100px;
+    resize: vertical;
 }
 
 /* Submit Button */
 input[type="submit"],
 button.submit {
-    background-color: #4caf50; /* Green for submit buttons */
-    color: white; /* White text */
-    padding: 10px 20px; /* Padding */
-    border: none; /* No border */
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    font-size: 16px; /* Font size */
-    transition: background-color 0.3s; /* Smooth transition */
+    background-color: #4CAF50; /* Green Submit Button */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
 }
 
 input[type="submit"]:hover,
 button.submit:hover {
-    background-color: #45a049; /* Darker green on hover */
+    background-color: #45A049; /* Darker Green on Hover */
 }
 
 /* List Styles */
 ul {
-    list-style-type: none; /* Remove default list styling */
-    padding: 0; /* Remove padding */
+    list-style-type: none;
+    padding: 0;
 }
 
 li {
-    background-color: #444; /* Background for list items */
-    color: #f4b400; /* Gold text */
-    padding: 10px; /* Padding inside list items */
-    margin-bottom: 10px; /* Space between list items */
-    border-radius: 4px; /* Rounded corners */
+    background-color: #EAEAEA; /* Light Gray List Items */
+    color: #002147; /* Navy Blue Text */
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
-        padding: 15px; /* Less padding on smaller screens */
+        padding: 15px;
     }
 
     h1 {
-        font-size: 2.5em; /* Smaller font size for headings */
+        font-size: 2.5em;
     }
 
     h2 {
-        font-size: 1.8em; /* Smaller subheading */
+        font-size: 1.8em;
     }
 
     button,
     input[type="submit"] {
-        padding: 8px 16px; /* Adjust button padding */
-        font-size: 14px; /* Smaller font size for buttons */
+        padding: 8px 16px;
+        font-size: 14px;
     }
 
     input[type="text"],
     input[type="number"],
     textarea {
-        padding: 8px; /* Adjust input padding */
+        padding: 8px;
     }
 }
