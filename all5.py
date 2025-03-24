@@ -53,6 +53,7 @@ def signup():
     if request.method == 'POST':
         username = request.form['username']
         fullname = request.form['fullname']
+        profession = request.form['profession']
         email = request.form['email']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
@@ -95,6 +96,7 @@ def signup():
             session['pending_user'] = {
                 'username': username,
                 'fullname': fullname,
+                'profession': profession,
                 'email': email,
                 'password': hashed_password,
                 'nationality': nationality,
