@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, flash, jsonify
+from flask import Flask, render_template, request, redirect, session, flash, jsonify, redirect, url_for
 import mysql.connector
 from mysql.connector import Error
 from flask_bcrypt import Bcrypt
@@ -7,6 +7,8 @@ import re
 from flask_mail import Mail, Message
 import random
 from itsdangerous import URLSafeTimedSerializer
+from datetime import datetime
+import os
 
 
 app = Flask(__name__, template_folder='template', static_folder='static')
@@ -21,7 +23,7 @@ app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = 'projectfinodido@gmail.com'  # Your email address
 app.config['MAIL_PASSWORD'] = 'csqv yavo jcwj bghz'  # Your email password
 app.config['MAIL_DEFAULT_SENDER'] = 'FINCOM'  # 
-
+ 
 
 mail = Mail(app)
 def get_db_connection():
@@ -235,6 +237,8 @@ def login():
 
             if user:
                 user_id, db_username, stored_password, customer_type = user
+                print(f"User found: {db_username}, {stored_password}, {customer_type}")  # Debug print
+
                 if bcrypt.check_password_hash(stored_password, password):
                     # Store user info in session
                     session['user_id'] = user_id
@@ -247,11 +251,14 @@ def login():
                     return redirect('/home1' if customer_type.lower() == 'individual' else '/home')
                 else:
                     flash("Invalid password!", "error")
+                    print("Invalid password")  # Debug print
             else:
                 flash("User not found!", "error")
+                print("User not found")  # Debug print
 
         except sqlite3.Error as e:
             flash(f"An error occurred: {e}", "error")
+            print(f"Database error: {e}")  # Debug print
         finally:
             cursor.close()
             conn.close()
@@ -262,17 +269,7 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/some_action')
-def some_action():
-    return "You chose Action 1!"
 
-@app.route('/another_action')
-def another_action():
-    return "You chose Action 2!"
-
-@app.route('/yet_another_action')
-def yet_another_action():
-    return "You chose Action 3!"
 
 def generate_welcome_message(username, customer_type):
     if customer_type.lower() == "individual":
@@ -344,19 +341,9 @@ def balances():
         cursor.close()
         conn.close()
         
-def get_db_connection():
-    """Establish a connection to the SQLite database with error handling."""
-    try:
-        conn = sqlite3.connect("mydatabase.db")
-        conn.row_factory = sqlite3.Row  # Allows accessing columns by name
-        return conn
-    except sqlite3.Error as e:
-        print(f"Database connection failed: {e}")
-        return None
 
 
-def get_db_connection():
-    return sqlite3.connect('mydatabase.db')
+
 
 def update_profit(username):
     conn = get_db_connection()
@@ -376,7 +363,7 @@ def update_profit(username):
             cursor.close()
             conn.close()
 
-def add_expenses(submitter_name, expense_type, account, category, description, amount, quantity,time):
+def add_expenses(submitter_name, expense_type, account, category, description, amount, quantity):
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
@@ -394,9 +381,9 @@ def add_expenses(submitter_name, expense_type, account, category, description, a
 
             # Insert expense with user_id
             cursor.execute("""
-                INSERT INTO transactions (user_id, name, type, account, category, description, amount, quantity,time)
+                INSERT INTO transactions (user_id, name, type, account, category, description, amount, quantity)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (user_id, submitter_name, expense_type, account, category, description, amount, quantity,time))
+            """, (user_id, submitter_name, expense_type, account, category, description, amount, quantity))
 
             # Update user balance
             balance_column = f"{account}_balance"
@@ -464,7 +451,7 @@ def total_expenses():
     return render_template('total_expenses.html', total=sum_total_expenses())
 
 # Function to add an income
-def add_income(submitter_name, income_type, account, category, description, amount, quantity,time):
+def add_income(submitter_name, income_type, account, category, description, amount, quantity):
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
@@ -482,9 +469,9 @@ def add_income(submitter_name, income_type, account, category, description, amou
 
             # Insert income with user_id
             cursor.execute("""
-                INSERT INTO transactions (user_id, name, type, account, category, description, amount, quantity,time)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (user_id, submitter_name, income_type, account, category, description, amount, quantity,time))
+                INSERT INTO transactions (user_id, name, type, account, category, description, amount, quantity)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (user_id, submitter_name, income_type, account, category, description, amount, quantity))
 
             # Update user balance
             balance_column = f"{account}_balance"
@@ -554,15 +541,7 @@ def total_income():
 
 
 
-def get_db_connection():
-    """Establish a connection to the SQLite database with error handling."""
-    try:
-        conn = sqlite3.connect("mydatabase.db")
-        conn.row_factory = sqlite3.Row  # Allows accessing columns by name
-        return conn
-    except sqlite3.Error as e:
-        print(f"Database connection failed: {e}")
-        return None
+
 
 def update_profit(user_id):
     """Calculate and update profit based on transactions for a user."""
@@ -796,6 +775,185 @@ def fetch_income():
     data = [{"category": row[0], "amount": row[1]} for row in rows]
     conn.close()
     return jsonify(data)
+
+
+
+
+
+# In-memory storage for posts
+
+
+
+
+#Create folder if it doesn't exist
+
+
+# In-memory storage for posts
+
+
+
+
+import os
+def connect_db():
+    return sqlite3.connect('video_db.db')
+
+from werkzeug.utils import secure_filename
+from datetime import datetime, timezone
+import os
+import sqlite3
+
+
+
+  
+
+UPLOAD_FOLDER_IMG = r"C:\Users\USER 24\Desktop\FINCOM\Fincom\static\img"
+UPLOAD_FOLDER_VIDEO = r"C:\Users\USER 24\Desktop\FINCOM\Fincom\static\video"
+ALLOWED_VIDEO_EXTENSIONS = {'mp4', 'avi', 'mov', 'wmv'}  # Allowed video formats
+
+posts = []
+
+
+
+# Ensure directories exist
+os.makedirs(UPLOAD_FOLDER_IMG, exist_ok=True)
+os.makedirs(UPLOAD_FOLDER_VIDEO, exist_ok=True)
+
+# Function to connect to the database
+
+@app.route('/post', methods=['POST'])
+def post():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    username = session['username']
+    title = request.form.get('title', '').strip()
+    content = request.form.get('content', '').strip()
+    media = request.files.get('media')
+
+    media_filename = None
+    media_type = None
+    timestamp = datetime.now(timezone.utc)
+
+    if media and media.filename:
+        file_ext = media.filename.rsplit('.', 1)[-1].lower()
+        safe_filename = secure_filename(media.filename)
+
+        if file_ext in ['jpg', 'jpeg', 'png', 'gif']:
+            media_type = "image"
+            save_path = os.path.join(UPLOAD_FOLDER_IMG, safe_filename)
+        elif file_ext in ['mp4', 'avi', 'mov', 'mkv']:
+            media_type = "video"
+            save_path = os.path.join(UPLOAD_FOLDER_VIDEO, safe_filename)
+        else:
+            return "Invalid file format", 400
+
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        media.save(save_path)
+        media_filename = safe_filename
+
+    # Save post to the database
+    conn = connect_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute('''
+            INSERT INTO posts (username, title, content, media_filename, media_type, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (username, title, content, media_filename, media_type, timestamp))
+
+        conn.commit()
+    except sqlite3.Error as e:
+        print("Database error:", e)
+        return "An error occurred while saving your post.", 500
+    finally:
+        conn.close()
+
+    return redirect(url_for('community'))
+
+def connect_db():
+    return sqlite3.connect('video_db.db')
+
+@app.route('/respond/<int:post_id>', methods=['POST'])
+def respond(post_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    response_content = request.form.get('response')
+    username = session['username']
+
+    conn = connect_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute('''
+            INSERT INTO responses (post_id, username, content, timestamp)
+            VALUES (?, ?, ?, ?)
+        ''', (post_id, username, response_content, datetime.now()))
+        conn.commit()
+    except sqlite3.Error as e:
+        print("Database error:", e)
+        return "An error occurred while saving your response.", 500
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('community'))
+
+
+@app.route('/community')
+def community():
+    conn = connect_db()
+    conn.row_factory = sqlite3.Row  # Rows act like dictionaries
+    cursor = conn.cursor()
+    
+    # Fetch posts and their associated responses
+    cursor.execute('''
+        SELECT p.*, r.username AS response_username, r.content AS response_content, r.timestamp AS response_timestamp
+        FROM posts p
+        LEFT JOIN responses r ON p.id = r.post_id
+        ORDER BY p.timestamp DESC
+    ''')
+    
+    rows = cursor.fetchall()
+    
+    # Convert the timestamp string to a datetime object for formatting in the template.
+    posts = {}
+    for row in rows:
+        post_id = row['id']
+        
+        # Create a new post entry if it doesn't exist
+        if post_id not in posts:
+            post = dict(row)
+            try:
+                # Convert the timestamp to a datetime object
+                post['timestamp'] = datetime.datetime.strptime(post['timestamp'], '%Y-%m-%d %H:%M:%S')
+            except Exception as e:
+                print("Timestamp conversion error:", e)
+            post['responses'] = []  # Initialize responses list
+            posts[post_id] = post
+        
+        # If there is a response, add it to the post's responses
+        if row['response_username'] is not None:
+            response = {
+                'username': row['response_username'],
+                'content': row['response_content'],
+                'timestamp': row['response_timestamp']
+            }
+            posts[post_id]['responses'].append(response)
+
+    # Convert posts dictionary back to a list
+    posts = list(posts.values())
+    
+    conn.close()
+    return render_template('community.html', posts=posts)
+
+
+
+
+
+
+
+
+
+
 
 @app.route('/logout')
 def logout():
