@@ -29,7 +29,13 @@
         <img src="../static/img/logo.webp" alt="Dashboard Banner" class="dashboard-image">
 
         <h1>Accounting Dashboard</h1>
-
+        <div class="profile-picture-container">
+            {% if session['pending_user'] is defined %}
+                <img src="{{ url_for('static', filename='profile_img/' + session['pending_user']['profile_picture']) }}" alt="Profile Picture" class="profile-picture">
+            {% else %}
+                <img src="{{ url_for('static', filename='default_profile.png') }}" alt="Default Profile Picture" class="profile-picture">
+            {% endif %}
+        </div>
         <div class="theme-switcher">
             <button style="background-color: #ff4c4c;" onclick="changeTheme('#ff4c4c')"></button>
             <button style="background-color: #4c9aff;" onclick="changeTheme('#4c9aff')"></button>
@@ -43,6 +49,7 @@
 
         <h2>{{ message }}</h2>
         <h3>What would you like to do today?</h3>
+        
         <div class="nav-buttons">
             <button onclick="window.location.href='/expenses'">Add Expense</button>
             <button onclick="window.location.href='/get_profit'">Profit</button>

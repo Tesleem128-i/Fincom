@@ -48,17 +48,23 @@ def about():
 def contact():
     return render_template("contact.html")
 
+
+# Define the path for profile images
+PROFILE_IMG_PATH = r"C:\Users\USER 24\Desktop\FINCOM\Fincom\static\profile_img"
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
+        # Retrieve form data
         username = request.form['username']
         fullname = request.form['fullname']
+        profession = request.form['profession']
         email = request.form['email']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
         nationality = request.form['nationality']
         customer_type = request.form['customer_type']
-
+        
         # Check if all required fields are filled
         if not username or not email or not password or not customer_type:
             flash("All fields are required!", "error")
@@ -69,7 +75,21 @@ def signup():
             flash("Passwords do not match!", "error")
             return redirect('/signup')
 
-        bcrypt = Bcrypt()
+        # Handle file upload
+        profile_picture = request.files.get('profile_picture')
+        profile_picture_filename = None
+
+        if profile_picture:
+            # Ensure the profile image directory exists
+            if not os.path.exists(PROFILE_IMG_PATH):
+                os.makedirs(PROFILE_IMG_PATH)
+
+            # Save the file
+            profile_picture_filename = f"{username}_profile.jpg"  # Customize the filename
+            profile_picture_path = os.path.join(PROFILE_IMG_PATH, profile_picture_filename)
+            profile_picture.save(profile_picture_path)
+
+        # Hash the password
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
         conn = sqlite3.connect("mydatabase.db")
@@ -95,12 +115,22 @@ def signup():
             session['pending_user'] = {
                 'username': username,
                 'fullname': fullname,
+                'profession': profession,
                 'email': email,
                 'password': hashed_password,
                 'nationality': nationality,
                 'customer_type': customer_type,
+                'profile_picture': profile_picture_filename,  # Store the filename
                 'pin': pin
             }
+
+            # Insert the new user into the database
+            cursor.execute("""
+                INSERT INTO users (username, fullname, profession, email, password, nationality, customer_type, profile_picture)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (username, fullname, profession, email, hashed_password, nationality, customer_type, profile_picture_filename))
+
+            conn.commit()  # Commit the changes to the database
 
             flash("A verification PIN has been sent to your email. Please check your inbox.", "success")
             return redirect('/verify_pin')

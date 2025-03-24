@@ -47,3 +47,51 @@ def create_tables():
 if __name__ == "__main__":
     create_tables()
     print("Database and tables created successfully.")
+    
+    
+import sqlite3
+
+def delete_user(user_id):
+    # Connect to the SQLite database
+    conn = sqlite3.connect('mydatabase.db')
+    cursor = conn.cursor()
+
+    # SQL command to delete a user by ID
+    try:
+        cursor.execute("DELETE FROM users WHERE id = ?;", (user_id,))
+        if cursor.rowcount > 0:
+            print(f"User  with ID {user_id} deleted successfully.")
+        else:
+            print(f"No user found with ID {user_id}.")
+    except sqlite3.Error as e:
+        print(f"An error occurred: {e}")
+
+    # Commit the changes and close the connection
+    conn.commit()
+    conn.close()
+
+# Example usage
+delete_user(6)  # Replace 1 with the ID of the user you want to delete
+
+
+import sqlite3
+
+def add_profile_picture_column():
+    # Connect to the SQLite database
+    conn = sqlite3.connect("mydatabase.db")
+    cursor = conn.cursor()
+
+    try:
+        # Execute the ALTER TABLE command to add the profile_picture column
+        cursor.execute("ALTER TABLE users ADD COLUMN profile_picture TEXT;")
+        print("Column 'profile_picture' added successfully.")
+    except sqlite3.Error as e:
+        print(f"An error occurred: {e}")
+    finally:
+        # Commit the changes and close the connection
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+# Call the function to add the column
+add_profile_picture_column()

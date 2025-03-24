@@ -165,3 +165,20 @@ footer {
         display: none;  /* Hide on very small screens */
     }
 }
+.profile-picture-container {
+    width: 100px; /* Set the width of the container */
+    height: 100px; /* Set the height of the container */
+    border: 2px solid #ccc; /* Border around the box */
+    border-radius: 10px; /* Rounded corners for the box */
+    display: flex; /* Center the image */
+    justify-content: center; /* Center the image horizontally */
+    align-items: center; /* Center the image vertically */
+    overflow: hidden; /* Hide overflow to maintain circular shape */
+    margin: 20px auto; /* Center the box horizontally with margin */
+}
+
+.profile-picture {
+    width: 100%; /* Make the image take the full width of the container */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 50%; /* Make the image circular */
+}
