@@ -48,14 +48,9 @@ def about():
 def contact():
     return render_template("contact.html")
 
-
-# Define the path for profile images
-PROFILE_IMG_PATH = r"C:\Users\USER 24\Desktop\FINCOM\Fincom\static\profile_img"
-
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        # Retrieve form data
         username = request.form['username']
         fullname = request.form['fullname']
         profession = request.form['profession']
@@ -64,7 +59,7 @@ def signup():
         confirm_password = request.form['confirm_password']
         nationality = request.form['nationality']
         customer_type = request.form['customer_type']
-        
+
         # Check if all required fields are filled
         if not username or not email or not password or not customer_type:
             flash("All fields are required!", "error")
@@ -75,21 +70,7 @@ def signup():
             flash("Passwords do not match!", "error")
             return redirect('/signup')
 
-        # Handle file upload
-        profile_picture = request.files.get('profile_picture')
-        profile_picture_filename = None
-
-        if profile_picture:
-            # Ensure the profile image directory exists
-            if not os.path.exists(PROFILE_IMG_PATH):
-                os.makedirs(PROFILE_IMG_PATH)
-
-            # Save the file
-            profile_picture_filename = f"{username}_profile.jpg"  # Customize the filename
-            profile_picture_path = os.path.join(PROFILE_IMG_PATH, profile_picture_filename)
-            profile_picture.save(profile_picture_path)
-
-        # Hash the password
+        bcrypt = Bcrypt()
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
         conn = sqlite3.connect("mydatabase.db")
@@ -120,15 +101,14 @@ def signup():
                 'password': hashed_password,
                 'nationality': nationality,
                 'customer_type': customer_type,
-                'profile_picture': profile_picture_filename,  # Store the filename
                 'pin': pin
             }
 
             # Insert the new user into the database
             cursor.execute("""
-                INSERT INTO users (username, fullname, profession, email, password, nationality, customer_type, profile_picture)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (username, fullname, profession, email, hashed_password, nationality, customer_type, profile_picture_filename))
+                INSERT INTO users (username, fullname, profession, email, password, nationality, customer_type)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (username, fullname, profession, email, hashed_password, nationality, customer_type))
 
             conn.commit()  # Commit the changes to the database
 
@@ -976,7 +956,30 @@ def community():
     return render_template('community.html', posts=posts)
 
 
+def get_db_connection():
+    conn = sqlite3.connect('mydatabase.db')
+    conn.row_factory = sqlite3.Row  # This allows us to access columns by name
+    return conn
 
+@app.route('/chatbox', methods=['GET'])
+def chatbox():
+    search_query = request.args.get('search', '')  # Get search query from URL
+    conn = get_db_connection()
+
+    if search_query:
+        # Fetch users that match the search query
+        users = conn.execute("SELECT * FROM users WHERE username LIKE ?", ('%' + search_query + '%',)).fetchall()
+    else:
+        # Retrieve top 10 users if no search query is provided
+        users = conn.execute("SELECT * FROM users LIMIT 10").fetchall()
+    
+    conn.close()
+    return render_template('chatbox.html', users=users, search_query=search_query)  
+
+@app.route('/chat/<username>')
+def chat(username):
+    # Here you would implement the chat functionality
+    return f"Chat with {username}" # Pass users to template
 
 
 
@@ -992,4 +995,4 @@ def logout():
     return redirect('/login')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
