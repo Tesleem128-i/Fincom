@@ -4,38 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accounting Dashboard</title>
-    <link rel="stylesheet" href="../static/css/home1.css">
-    <link rel="icon" type="image/webp" href="../static/img/logo.webp">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home1.css') }}">
+    <link rel="icon" type="image/webp" href="{{ url_for('static', filename='img/logo.webp') }}">
 </head>
 <body>
 
     <!-- Left Slideshow Box -->
     <div class="slideshow-container left-slideshow">
-        <img src="../static/img/slide1.png" alt="Slide 1">
-        <img src="../static/img/slide4.webp" alt="Slide 2">
-        <img src="../static/img/slide2.jpg" alt="Slide 3">
+        <img src="{{ url_for('static', filename='img/slide1.png') }}" alt="Slide 1">
+        <img src="{{ url_for('static', filename='img/slide4.webp') }}" alt="Slide 2">
+        <img src="{{ url_for('static', filename='img/slide2.jpg') }}" alt="Slide 3">
     </div>
 
     <!-- Right Slideshow Box -->
     <div class="slideshow-container right-slideshow">
-        <img src="../static/img/slide4.webp" alt="Slide 4">
-        <img src="../static/img/slide1.png" alt="Slide 5">
-        <img src="../static/img/slide2.jpg" alt="Slide 6">
+        <img src="{{ url_for('static', filename='img/slide4.webp') }}" alt="Slide 4">
+        <img src="{{ url_for('static', filename='img/slide1.png') }}" alt="Slide 5">
+        <img src="{{ url_for('static', filename='img/slide2.jpg') }}" alt="Slide 6">
     </div>
 
     <div class="container">
         <!-- Image above the dashboard title -->
-        <img src="../static/img/logo.webp" alt="Dashboard Banner" class="dashboard-image">
+        <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="Dashboard Banner" class="dashboard-image">
 
         <h1>Accounting Dashboard</h1>
-        <div class="profile-picture-container">
-            {% if session['pending_user'] is defined %}
-                <img src="{{ url_for('static', filename='profile_img/' + session['pending_user']['profile_picture']) }}" alt="Profile Picture" class="profile-picture">
-            {% else %}
-                <img src="{{ url_for('static', filename='default_profile.png') }}" alt="Default Profile Picture" class="profile-picture">
-            {% endif %}
-        </div>
+
+       
+
         <div class="theme-switcher">
             <button style="background-color: #ff4c4c;" onclick="changeTheme('#ff4c4c')"></button>
             <button style="background-color: #4c9aff;" onclick="changeTheme('#4c9aff')"></button>
@@ -55,13 +50,13 @@
             <button onclick="window.location.href='/get_profit'">Profit</button>
             <button onclick="window.location.href='/income'">Add Income</button>
             <button onclick="window.location.href='/Analysis'">Analysis</button>
-            <button onclick="window.location.href='/Business_advice'">Want to get started with a new bussiness</button>
-            <button onclick="window.location.href='/community'">Talk to milloners</button>
-
+            <button onclick="window.location.href='/Business_advice'">Start a New Business</button>
+            <button onclick="window.location.href='/community'">Talk to Millionaires</button>
+        </div>
 
         <!-- Video animation below the dashboard -->
         <video class="dashboard-video" autoplay loop muted>
-            <source src="../static/videos/nice.mp4" type="video/mp4">
+            <source src="{{ url_for('static', filename='videos/nice.mp4') }}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
     </div>
@@ -76,17 +71,16 @@
         function startSlideshow(slideshowClass) {
             let slides = document.querySelectorAll(`.${slideshowClass} img`);
             let index = 0;
-    
+
             function showNextSlide() {
-                slides[index].style.opacity = "0"; // Hide current slide
-                index = (index + 1) % slides.length; // Move to next slide
-                slides[index].style.opacity = "1"; // Show next slide
+                slides.forEach(slide => slide.style.opacity = "0");
+                slides[index].style.opacity = "1";
+                index = (index + 1) % slides.length;
             }
-    
-            setInterval(showNextSlide, 3000); // Change image every 3 seconds
+
+            setInterval(showNextSlide, 3000);
         }
-    
-        // Start the slideshows
+
         document.addEventListener("DOMContentLoaded", function() {
             startSlideshow("left-slideshow");
             startSlideshow("right-slideshow");

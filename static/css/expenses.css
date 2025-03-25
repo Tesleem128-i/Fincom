@@ -117,14 +117,15 @@ label {
   position: absolute;
   width: 100%;
   display: none;
-  background: grey;
+  background: white; /* Change to white for better visibility */
   border: 1px solid #FFD700;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
-  z-index: 1000;
+  z-index: 1000; /* Ensure it is above other elements */
   max-height: 200px;
   overflow-y: auto;
 }
+
 
 .dropdown-option {
   display: flex;
@@ -194,3 +195,4 @@ label {
 .slideshow-background img:nth-child(3) {
   animation-delay: 20s;
 }
+

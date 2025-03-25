@@ -71,27 +71,6 @@ def delete_user(user_id):
     conn.close()
 
 # Example usage
-delete_user(6)  # Replace 1 with the ID of the user you want to delete
+delete_user(13)  # Replace 1 with the ID of the user you want to delete
 
 
-import sqlite3
-
-def add_profile_picture_column():
-    # Connect to the SQLite database
-    conn = sqlite3.connect("mydatabase.db")
-    cursor = conn.cursor()
-
-    try:
-        # Execute the ALTER TABLE command to add the profile_picture column
-        cursor.execute("ALTER TABLE users ADD COLUMN profile_picture TEXT;")
-        print("Column 'profile_picture' added successfully.")
-    except sqlite3.Error as e:
-        print(f"An error occurred: {e}")
-    finally:
-        # Commit the changes and close the connection
-        conn.commit()
-        cursor.close()
-        conn.close()
-
-# Call the function to add the column
-add_profile_picture_column()

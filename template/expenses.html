@@ -14,13 +14,7 @@
     <h2>Add Expense</h2>
     
     <!-- Display Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="flash-message flash-{{ category }}">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
+   
     
     <form action="{{ url_for('expenses') }}" method="POST">
       <label for="name">Your Name:</label>
@@ -56,31 +50,42 @@
 
 
       
-      <label for="category">Category:</label>
-      <div class="dropdown">
-        <div class="dropdown-selected" onclick="toggleDropdown()">
-          <img id="selectedCategoryImg" src="../static/img/categories.webp" alt="Category">
-          <span id="selectedCategoryText">Select a category</span>
-        </div>
-        <div class="dropdown-options" id="dropdownOptions">
-          <div class="dropdown-option" onclick="selectCategory('rent', '../static/img/rent.png')">
-            <img src="../static/img/rent.webp" alt="Rent"> Rent
-          </div>
-          <div class="dropdown-option" onclick="selectCategory('utilities', '../static/img/utilities.png')">
-            <img src="../static/img/utilities.webp" alt="Utilities"> Utilities
-          </div>
-          <div class="dropdown-option" onclick="selectCategory('groceries', '../static/img/groceries.png')">
-            <img src="../static/img/groceries.webp" alt="Groceries"> Groceries
-          </div>
-          <div class="dropdown-option" onclick="selectCategory('transportation', '../static/img/transportation.png')">
-            <img src="../static/img/transportation.webp" alt="Transportation"> Transportation
-          </div>
-          <div class="dropdown-option" onclick="selectCategory('entertainment', '../static/img/entertainment.png')">
-            <img src="../static/img/entertainment.webp" alt="Entertainment"> Entertainment
-          </div>
-        </div>
-        <input type="hidden" name="category" id="category">
-      </div>
+<label for="category">Category:</label>
+<div class="dropdown">
+  <!-- Selected Category Display -->
+  <div class="dropdown-selected" onclick="toggleDropdown()">
+    <img id="selectedCategoryImg" src="../static/img/categories.webp" alt="Category">
+    <span id="selectedCategoryText">Select a category</span>
+  </div>
+
+  <!-- Dropdown Options -->
+  <div class="dropdown-options" id="dropdownOptions">
+    <div class="dropdown-option" onclick="selectCategory('rent', '../static/img/rent.webp')">
+      <img src="../static/img/rent.webp" alt="Rent">
+      <span>Rent</span>
+    </div>
+    <div class="dropdown-option" onclick="selectCategory('utilities', '../static/img/utilities.webp')">
+      <img src="../static/img/utilities.webp" alt="Utilities">
+      <span>Utilities</span>
+    </div>
+    <div class="dropdown-option" onclick="selectCategory('groceries', '../static/img/groceries.webp')">
+      <img src="../static/img/groceries.webp" alt="Groceries">
+      <span>Groceries</span>
+    </div>
+    <div class="dropdown-option" onclick="selectCategory('transportation', '../static/img/transportation.webp')">
+      <img src="../static/img/transportation.webp" alt="Transportation">
+      <span>Transportation</span>
+    </div>
+    <div class="dropdown-option" onclick="selectCategory('entertainment', '../static/img/entertainment.webp')">
+      <img src="../static/img/entertainment.webp" alt="Entertainment">
+      <span>Entertainment</span>
+    </div>
+  </div>
+  
+  <!-- Hidden Input to Store Selected Category -->
+  <input type="hidden" name="category" id="category">
+</div>
+
 
       <label for="description">Description:</label>
       <textarea name="description" id="description" placeholder="Describe your expense" rows="3" required></textarea>
@@ -97,59 +102,32 @@
   </div>
 
   <script>
-    function toggleDropdown() {
-      let dropdown = document.getElementById("dropdownOptions");
-      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-    }
-
-    function selectCategory(category, imageSrc) {
-      document.getElementById("selectedCategoryText").innerText = category.charAt(0).toUpperCase() + category.slice(1);
-      document.getElementById("selectedCategoryImg").src = imageSrc;
-      document.getElementById("category").value = category;
-      document.getElementById("dropdownOptions").style.display = "none";
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener("click", function(event) {
-      let dropdown = document.getElementById("dropdownOptions");
-      let selected = document.querySelector(".dropdown-selected");
-      if (!dropdown.contains(event.target) && !selected.contains(event.target)) {
-        dropdown.style.display = "none";
-      }
-    });
-    
-      function updateAccountImage() {
-          var select = document.getElementById("account");
-          var selectedOption = select.options[select.selectedIndex];
-          var imgElement = document.getElementById("account-image");
-    
-          if (selectedOption.dataset.image) {
-              imgElement.src = selectedOption.dataset.image;
-              imgElement.style.display = "inline";
-          } else {
-              imgElement.style.display = "none";
-          }
-      }
-      function toggleAccountDropdown() {
-        let dropdown = document.getElementById("accountDropdownOptions");
-        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-      }
-      
-      function selectAccount(account, imageSrc) {
-        document.getElementById("selectedAccountText").innerText = account.charAt(0).toUpperCase() + account.slice(1);
-        document.getElementById("selectedAccountImg").src = imageSrc;
-        document.getElementById("account").value = account;
-        document.getElementById("accountDropdownOptions").style.display = "none";
-      }
-      
-      // Close dropdown when clicking outside
-      document.addEventListener("click", function(event) {
-        let dropdown = document.getElementById("accountDropdownOptions");
-        let selected = document.querySelector(".dropdown-selected");
-        if (!dropdown.contains(event.target) && !selected.contains(event.target)) {
-          dropdown.style.display = "none";
-        }
+    document.addEventListener("DOMContentLoaded", function () {
+      const dropdown = document.querySelector(".dropdown-selected");
+      const dropdownOptions = document.querySelector(".dropdown-options");
+  
+      dropdown.addEventListener("click", function () {
+          dropdownOptions.style.display = 
+              dropdownOptions.style.display === "block" ? "none" : "block";
       });
+  
+      // Close dropdown when clicking outside
+      document.addEventListener("click", function (event) {
+          if (!dropdown.contains(event.target) && !dropdownOptions.contains(event.target)) {
+              dropdownOptions.style.display = "none";
+          }
+      });
+  
+      // Handle option selection
+      document.querySelectorAll(".dropdown-option").forEach(option => {
+          option.addEventListener("click", function () {
+              dropdown.querySelector("span").textContent = this.textContent;
+              dropdownOptions.style.display = "none";
+          });
+      });
+  });
+  
+  
       
     
   </script>

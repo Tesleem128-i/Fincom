@@ -1,40 +1,89 @@
 body {
     font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #4facfe, #00f2fe);
+    background-color: #007bff; /* Blue background color */
+    color: white; /* White text color for better contrast */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0; /* Ensure no default margin */
+}
+
+.container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-}
-
-h2 {
-    color: white;
-}
-
-#user-list {
-    width: 400px;
-    background: white;
+    max-width: 1000px;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.5s ease-in-out;
 }
 
-.user {
+.search-box {
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 20px;
+    display: flex;
+}
+
+.search-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.search-btn {
+    padding: 10px 15px;
+    background-color: #0056b3; /* Darker blue for buttons */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-left: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s; /* Add transition for hover effect */
+}
+
+.search-btn:hover {
+    background-color: #004494; /* Even darker blue on hover */
+}
+
+.clear-btn {
+    padding: 10px 15px;
+    background-color: #dc3545; /* Red for clear button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-left: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s; /* Add transition for hover effect */
+}
+
+.clear-btn:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+.user-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+}
+
+.user-card {
+    background: #d4edda; /* Light green background for user cards */
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    background: linear-gradient(to right, #ff9a9e, #fad0c4);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease-in-out;
+    width: 300px;
+    transition: transform 0.3s, box-shadow 0.3s; /* Add transition for hover effect */
+    animation: fadeIn 0.5s ease-in-out; /* Add fade-in animation */
 }
 
-.user:hover {
-    transform: scale(1.05);
+.user-card:hover {
+    transform: scale(1.05); /* Scale effect on hover */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
 }
 
 .profile-pic {
@@ -42,7 +91,6 @@ h2 {
     height: 50px;
     border-radius: 50%;
     margin-right: 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .user-info {
@@ -54,18 +102,20 @@ h3, p {
 }
 
 .message-btn {
-    text-decoration: none;
-    background: #007bff;
-    color: white;
+    display: inline-block;
     padding: 8px 12px;
+    background-color: #007bff; /* Blue for message button */
+    color: white;
+    text-decoration: none;
     border-radius: 5px;
-    transition: background 0.3s;
+    transition: background-color 0.3s, transform 0.3s; /* Add transition for hover effect */
 }
 
 .message-btn:hover {
-    background: #0056b3;
+    background-color: #0056b3; /* Darker blue on hover */
 }
 
+/* Animation for fade-in effect */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }

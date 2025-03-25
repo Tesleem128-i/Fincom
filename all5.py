@@ -20,22 +20,97 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'projectfinodido@gmail.com'  # Your email address
-app.config['MAIL_PASSWORD'] = 'csqv yavo jcwj bghz'  # Your email password
+app.config['MAIL_USERNAME'] = 'projectfinodido@gmail.com'  # email address
+app.config['MAIL_PASSWORD'] = 'csqv yavo jcwj bghz'  # email password
 app.config['MAIL_DEFAULT_SENDER'] = 'FINCOM'  # 
  
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "mydatabase.db")
+
 mail = Mail(app)
+
 def get_db_connection():
     """Establish a connection to the SQLite database with error handling."""
     try:
-        conn = sqlite3.connect("mydatabase.db")
+        conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row  # Allows accessing columns by name
         print("Database connection established.")
         return conn
     except sqlite3.Error as e:
         print(f"Database connection failed: {e}")
         return None
+
+def initialize_database():
+    """Initialize the database and create tables if they don't exist."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    # Create the `users` table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL UNIQUE,
+        fullname TEXT,
+        profession TEXT,
+        email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        nationality TEXT,
+        customer_type TEXT,
+        profit REAL DEFAULT 0,
+        total_income REAL DEFAULT 0,
+        total_expenses REAL DEFAULT 0,
+        cash_balance REAL DEFAULT 0,
+        card_balance REAL DEFAULT 0
+    )
+    """)
+
+    # Create the `transactions` table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS transactions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        name TEXT,
+        type TEXT,
+        account TEXT,
+        category TEXT,
+        description TEXT,
+        amount REAL,
+        quantity REAL,
+        transaction_type TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users (id)
+    )
+    """)
+
+    # Create the `posts` table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS posts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL,
+        title TEXT NOT NULL,
+        content TEXT,
+        media_filename TEXT,
+        media_type TEXT,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    # Create the `responses` table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS responses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        post_id INTEGER NOT NULL,
+        username TEXT NOT NULL,
+        content TEXT NOT NULL,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (post_id) REFERENCES posts (id)
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+    print(f"Database initialized successfully at {DB_PATH}.")
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -48,14 +123,16 @@ def about():
 def contact():
     return render_template("contact.html")
 
+<<<<<<< HEAD
 
 # Define the path for profile images
 PROFILE_IMG_PATH = r"C:\Users\USER 23\Desktop\FINCOM\Fincom\static\profile_img"
 
+=======
+>>>>>>> 17f6aacb73396e7deea5fe478d29457362748641
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        # Retrieve form data
         username = request.form['username']
         fullname = request.form['fullname']
         profession = request.form['profession']
@@ -64,7 +141,7 @@ def signup():
         confirm_password = request.form['confirm_password']
         nationality = request.form['nationality']
         customer_type = request.form['customer_type']
-        
+
         # Check if all required fields are filled
         if not username or not email or not password or not customer_type:
             flash("All fields are required!", "error")
@@ -75,21 +152,7 @@ def signup():
             flash("Passwords do not match!", "error")
             return redirect('/signup')
 
-        # Handle file upload
-        profile_picture = request.files.get('profile_picture')
-        profile_picture_filename = None
-
-        if profile_picture:
-            # Ensure the profile image directory exists
-            if not os.path.exists(PROFILE_IMG_PATH):
-                os.makedirs(PROFILE_IMG_PATH)
-
-            # Save the file
-            profile_picture_filename = f"{username}_profile.jpg"  # Customize the filename
-            profile_picture_path = os.path.join(PROFILE_IMG_PATH, profile_picture_filename)
-            profile_picture.save(profile_picture_path)
-
-        # Hash the password
+        bcrypt = Bcrypt()
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
         conn = sqlite3.connect("mydatabase.db")
@@ -120,15 +183,14 @@ def signup():
                 'password': hashed_password,
                 'nationality': nationality,
                 'customer_type': customer_type,
-                'profile_picture': profile_picture_filename,  # Store the filename
                 'pin': pin
             }
 
             # Insert the new user into the database
             cursor.execute("""
-                INSERT INTO users (username, fullname, profession, email, password, nationality, customer_type, profile_picture)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (username, fullname, profession, email, hashed_password, nationality, customer_type, profile_picture_filename))
+                INSERT INTO users (username, fullname, profession, email, password, nationality, customer_type)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (username, fullname, profession, email, hashed_password, nationality, customer_type))
 
             conn.commit()  # Commit the changes to the database
 
@@ -976,7 +1038,30 @@ def community():
     return render_template('community.html', posts=posts)
 
 
+def get_db_connection():
+    conn = sqlite3.connect('mydatabase.db')
+    conn.row_factory = sqlite3.Row  # This allows us to access columns by name
+    return conn
 
+@app.route('/chatbox', methods=['GET'])
+def chatbox():
+    search_query = request.args.get('search', '')  # Get search query from URL
+    conn = get_db_connection()
+
+    if search_query:
+        # Fetch users that match the search query
+        users = conn.execute("SELECT * FROM users WHERE username LIKE ?", ('%' + search_query + '%',)).fetchall()
+    else:
+        # Retrieve top 10 users if no search query is provided
+        users = conn.execute("SELECT * FROM users LIMIT 10").fetchall()
+    
+    conn.close()
+    return render_template('chatbox.html', users=users, search_query=search_query)  
+
+@app.route('/chat/<username>')
+def chat(username):
+    # Here you would implement the chat functionality
+    return f"Chat with {username}" # Pass users to template
 
 
 
@@ -992,4 +1077,4 @@ def logout():
     return redirect('/login')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
