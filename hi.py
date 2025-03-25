@@ -71,6 +71,6 @@ def delete_user(user_id):
     conn.close()
 
 # Example usage
-delete_user(4)  # Replace 1 with the ID of the user you want to delete
+delete_user(13)  # Replace 1 with the ID of the user you want to delete
 
 

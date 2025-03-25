@@ -25,17 +25,92 @@ app.config['MAIL_PASSWORD'] = 'csqv yavo jcwj bghz'  # email password
 app.config['MAIL_DEFAULT_SENDER'] = 'FINCOM'  # 
  
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "mydatabase.db")
+
 mail = Mail(app)
+
 def get_db_connection():
     """Establish a connection to the SQLite database with error handling."""
     try:
-        conn = sqlite3.connect("mydatabase.db")
+        conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row  # Allows accessing columns by name
         print("Database connection established.")
         return conn
     except sqlite3.Error as e:
         print(f"Database connection failed: {e}")
         return None
+
+def initialize_database():
+    """Initialize the database and create tables if they don't exist."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    # Create the `users` table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL UNIQUE,
+        fullname TEXT,
+        profession TEXT,
+        email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        nationality TEXT,
+        customer_type TEXT,
+        profit REAL DEFAULT 0,
+        total_income REAL DEFAULT 0,
+        total_expenses REAL DEFAULT 0,
+        cash_balance REAL DEFAULT 0,
+        card_balance REAL DEFAULT 0
+    )
+    """)
+
+    # Create the `transactions` table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS transactions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        name TEXT,
+        type TEXT,
+        account TEXT,
+        category TEXT,
+        description TEXT,
+        amount REAL,
+        quantity REAL,
+        transaction_type TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users (id)
+    )
+    """)
+
+    # Create the `posts` table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS posts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL,
+        title TEXT NOT NULL,
+        content TEXT,
+        media_filename TEXT,
+        media_type TEXT,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    # Create the `responses` table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS responses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        post_id INTEGER NOT NULL,
+        username TEXT NOT NULL,
+        content TEXT NOT NULL,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (post_id) REFERENCES posts (id)
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+    print(f"Database initialized successfully at {DB_PATH}.")
 @app.route('/')
 def index():
     return render_template("index.html")
