@@ -123,6 +123,13 @@ def about():
 def contact():
     return render_template("contact.html")
 
+<<<<<<< HEAD
+
+# Define the path for profile images
+PROFILE_IMG_PATH = r"C:\Users\USER 23\Desktop\FINCOM\Fincom\static\profile_img"
+
+=======
+>>>>>>> 17f6aacb73396e7deea5fe478d29457362748641
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -891,8 +898,8 @@ import sqlite3
 
   
 
-UPLOAD_FOLDER_IMG = r"C:\Users\USER 24\Desktop\FINCOM\Fincom\static\img"
-UPLOAD_FOLDER_VIDEO = r"C:\Users\USER 24\Desktop\FINCOM\Fincom\static\video"
+UPLOAD_FOLDER_IMG = r"C:\Users\USER 23\Desktop\FINCOM\Fincom\static\img"
+UPLOAD_FOLDER_VIDEO = r"C:\Users\USER 23\Desktop\FINCOM\Fincom\static\video"
 ALLOWED_VIDEO_EXTENSIONS = {'mp4', 'avi', 'mov', 'wmv'}  # Allowed video formats
 
 posts = []
