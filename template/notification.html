@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification</title>
+    <link rel="stylesheet" href="notification.css">
+</head>
+<body>
+
+    <button id="notify-btn">Show Notification</button>
+
+    <div id="notification" class="hidden">
+        <span class="close-btn">&times;</span>
+        <p><strong>Success!</strong> Your action was completed.</p>
+    </div>
+
+    <script>
+        document.getElementById("notify-btn").addEventListener("click", function() {
+            let notification = document.getElementById("notification");
+            notification.classList.add("show");
+
+            // Auto-hide after 4 seconds
+            setTimeout(() => {
+                notification.classList.remove("show");
+            }, 4000);
+        });
+
+        document.querySelector(".close-btn").addEventListener("click", function() {
+            document.getElementById("notification").classList.remove("show");
+        });
+    </script>
+
+</body>
+</html>
