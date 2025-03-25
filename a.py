@@ -1,11 +1,20 @@
 import sqlite3
+import os
 
-# Connect to the new database 'video_db.db'
-conn = sqlite3.connect('video_db.db')
-cursor = conn.cursor()
+# Define the database path inside the FINCOM folder
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, 'video_db.db')
 
-# Create the posts table
-cursor.execute('''
+def connect_db():
+    """Connect to the SQLite database."""
+    return sqlite3.connect(DB_PATH)
+
+def create_posts_table():
+    """Create the posts table if it doesn't exist."""
+    conn = connect_db()
+    cursor = conn.cursor()
+    
+    create_table_sql = '''
     CREATE TABLE IF NOT EXISTS posts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL,
@@ -14,32 +23,30 @@ cursor.execute('''
         media_filename TEXT, 
         media_type TEXT,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-''')
-
-conn.commit()
-conn.close()
-print("Database 'video_db.db' and table 'posts' created successfully!")
-
-
-import sqlite3
-
-def connect_db():
-    # Replace 'your_database.db' with the path to your SQLite database file
-    return sqlite3.connect('video_db.db')
+    );
+    '''
+    
+    try:
+        cursor.execute(create_table_sql)
+        conn.commit()
+        print("Posts table created successfully.")
+    except sqlite3.Error as e:
+        print("An error occurred while creating the posts table:", e)
+    finally:
+        conn.close()
 
 def create_responses_table():
+    """Create the responses table if it doesn't exist."""
     conn = connect_db()
     cursor = conn.cursor()
     
-    # SQL command to create the responses table
     create_table_sql = '''
     CREATE TABLE IF NOT EXISTS responses (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         post_id INTEGER,
         username TEXT,
         content TEXT,
-        timestamp DATETIME,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (post_id) REFERENCES posts (id)
     );
     '''
@@ -49,9 +56,16 @@ def create_responses_table():
         conn.commit()
         print("Responses table created successfully.")
     except sqlite3.Error as e:
-        print("An error occurred:", e)
+        print("An error occurred while creating the responses table:", e)
     finally:
         conn.close()
 
-if __name__ == "__main__":
+def initialize_database():
+    """Initialize the database by creating all necessary tables."""
+    print(f"Initializing database at {DB_PATH}...")
+    create_posts_table()
     create_responses_table()
+    print("Database initialization complete.")
+
+if __name__ == "__main__":
+    initialize_database()
