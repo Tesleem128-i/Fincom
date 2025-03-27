@@ -71,6 +71,39 @@ def delete_user(user_id):
     conn.close()
 
 # Example usage
-delete_user(13)  # Replace 1 with the ID of the user you want to delete
+delete_user(3)  # Replace 1 with the ID of the user you want to delete
 
 
+
+def create_tables():
+    conn = sqlite3.connect('mydatabase.db')  # Change to your database file
+    cursor = conn.cursor()
+    
+    # Create users table (if it doesn't exist)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE,
+            email TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
+    # Create prices table (if it doesn't exist)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS prices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            date TEXT NOT NULL,  -- Store date as TEXT in 'YYYY-MM-DD' format
+            price REAL NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+        )
+    ''')
+    
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+# Call this function when your application starts
+create_tables()

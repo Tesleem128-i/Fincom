@@ -30,87 +30,7 @@ DB_PATH = os.path.join(BASE_DIR, "mydatabase.db")
 
 mail = Mail(app)
 
-def get_db_connection():
-    """Establish a connection to the SQLite database with error handling."""
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row  # Allows accessing columns by name
-        print("Database connection established.")
-        return conn
-    except sqlite3.Error as e:
-        print(f"Database connection failed: {e}")
-        return None
 
-def initialize_database():
-    """Initialize the database and create tables if they don't exist."""
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-
-    # Create the `users` table
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT NOT NULL UNIQUE,
-        fullname TEXT,
-        profession TEXT,
-        email TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL,
-        nationality TEXT,
-        customer_type TEXT,
-        profit REAL DEFAULT 0,
-        total_income REAL DEFAULT 0,
-        total_expenses REAL DEFAULT 0,
-        cash_balance REAL DEFAULT 0,
-        card_balance REAL DEFAULT 0
-    )
-    """)
-
-    # Create the `transactions` table
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS transactions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        name TEXT,
-        type TEXT,
-        account TEXT,
-        category TEXT,
-        description TEXT,
-        amount REAL,
-        quantity REAL,
-        transaction_type TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users (id)
-    )
-    """)
-
-    # Create the `posts` table
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS posts (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT NOT NULL,
-        title TEXT NOT NULL,
-        content TEXT,
-        media_filename TEXT,
-        media_type TEXT,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-    """)
-
-    # Create the `responses` table
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS responses (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        post_id INTEGER NOT NULL,
-        username TEXT NOT NULL,
-        content TEXT NOT NULL,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (post_id) REFERENCES posts (id)
-    )
-    """)
-
-    conn.commit()
-    conn.close()
-    print(f"Database initialized successfully at {DB_PATH}.")
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -123,13 +43,6 @@ def about():
 def contact():
     return render_template("contact.html")
 
-<<<<<<< HEAD
-
-# Define the path for profile images
-PROFILE_IMG_PATH = r"C:\Users\USER 23\Desktop\FINCOM\Fincom\static\profile_img"
-
-=======
->>>>>>> 17f6aacb73396e7deea5fe478d29457362748641
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -152,7 +65,7 @@ def signup():
             flash("Passwords do not match!", "error")
             return redirect('/signup')
 
-        bcrypt = Bcrypt()
+        # Hash the password
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
         conn = sqlite3.connect("mydatabase.db")
@@ -174,7 +87,7 @@ def signup():
             msg.body = f"Your verification PIN is: {pin}"
             mail.send(msg)
 
-            # Store user data temporarily (you may want to store it in a session or database)
+            # Store user data temporarily
             session['pending_user'] = {
                 'username': username,
                 'fullname': fullname,
@@ -185,14 +98,6 @@ def signup():
                 'customer_type': customer_type,
                 'pin': pin
             }
-
-            # Insert the new user into the database
-            cursor.execute("""
-                INSERT INTO users (username, fullname, profession, email, password, nationality, customer_type)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, (username, fullname, profession, email, hashed_password, nationality, customer_type))
-
-            conn.commit()  # Commit the changes to the database
 
             flash("A verification PIN has been sent to your email. Please check your inbox.", "success")
             return redirect('/verify_pin')
@@ -213,12 +118,20 @@ def verify_pin():
     if request.method == 'POST':
         entered_pin = request.form['pin']
         pending_user = session.get('pending_user')
+        print(f"Entered PIN: {entered_pin}, Pending User: {pending_user}")  # Debugging line
 
         if pending_user and str(pending_user['pin']) == entered_pin:
-            # Insert new user into the database
+            # Check if the user already exists before inserting
             conn = sqlite3.connect("mydatabase.db")
             cursor = conn.cursor()
             try:
+                cursor.execute("SELECT * FROM users WHERE email = ?", (pending_user['email'],))
+                existing_user = cursor.fetchone()
+                if existing_user:
+                    flash("This email is already registered. Please log in.", "error")
+                    return redirect('/login')
+
+                # Insert new user into the database
                 cursor.execute("""
                     INSERT INTO users (username, fullname, email, password, nationality, customer_type)
                     VALUES (?, ?, ?, ?, ?, ?)
@@ -898,8 +811,8 @@ import sqlite3
 
   
 
-UPLOAD_FOLDER_IMG = r"C:\Users\USER 23\Desktop\FINCOM\Fincom\static\img"
-UPLOAD_FOLDER_VIDEO = r"C:\Users\USER 23\Desktop\FINCOM\Fincom\static\video"
+UPLOAD_FOLDER_IMG = r"C:\Users\USER 24\Desktop\FINCOM\Fincom\static\img"
+UPLOAD_FOLDER_VIDEO = r"C:\Users\USER 24\Desktop\FINCOM\Fincom\static\video"
 ALLOWED_VIDEO_EXTENSIONS = {'mp4', 'avi', 'mov', 'wmv'}  # Allowed video formats
 
 posts = []
