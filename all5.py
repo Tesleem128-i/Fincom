@@ -123,13 +123,12 @@ def about():
 def contact():
     return render_template("contact.html")
 
-<<<<<<< HEAD
+
 
 # Define the path for profile images
 PROFILE_IMG_PATH = r"C:\Users\USER 23\Desktop\FINCOM\Fincom\static\profile_img"
 
-=======
->>>>>>> 17f6aacb73396e7deea5fe478d29457362748641
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -325,7 +324,7 @@ def login():
             
             # Query user by username
             cursor.execute("SELECT id, username, password, customer_type FROM users WHERE username = ?", (username,))
-            user = cursor.fetchone()
+            user = cursor.fetchall()
 
             if user:
                 user_id, db_username, stored_password, customer_type = user
