@@ -6,10 +6,9 @@
     <title>Chat Room</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        /* Your existing CSS styles */
         body {
-            background-color: #121212; /* Dark background */
-            color: #ffffff; /* White text */
+            background-color: #121212;
+            color: #ffffff;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
@@ -22,7 +21,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            border: 1px solid #ff4081; /* Shiny pink border */
+            border: 1px solid #ff4081;
             border-radius: 10px;
             overflow: hidden;
         }
@@ -31,7 +30,7 @@
             flex: 1;
             padding: 20px;
             overflow-y: auto;
-            border-bottom: 1px solid #ff4081; /* Shiny pink border */
+            border-bottom: 1px solid #ff4081;
         }
 
         .message {
@@ -39,23 +38,23 @@
             padding: 10px;
             border-radius: 5px;
             position: relative;
-            max-width: 80%; /* Limit message width */
+            max-width: 80%;
         }
 
         .message.sent {
-            background-color: #ff4081; /* Shiny pink for sent messages */
+            background-color: #ff4081;
             align-self: flex-end;
         }
 
         .message.received {
-            background-color: #333; /* Darker background for received messages */
+            background-color: #333;
             align-self: flex-start;
         }
 
         .input-container {
             display: flex;
             padding: 10px;
-            background-color: #222; /* Dark input area */
+            background-color: #222;
         }
 
         .input-container input {
@@ -64,46 +63,44 @@
             border: none;
             border-radius: 5px;
             margin-right: 10px;
-            background-color: #333; /* Dark input field */
-            color: #fff; /* White text */
+            background-color: #333;
+            color: #fff;
         }
 
         .input-container button {
-            background-color: #ff4081; /* Shiny pink button */
+            background-color: #ff4081;
             border: none;
             border-radius: 5px;
             padding: 10px 15px;
-            color: #fff; /* White text */
+            color: #fff;
             cursor: pointer;
             transition: background-color 0.3s;
         }
 
         .input-container button:hover {
-            background-color: #e91e63; /* Darker pink on hover */
+            background-color: #e91e63;
         }
 
-        /* Scrollbar styles */
         .messages::-webkit-scrollbar {
             width: 8px;
         }
 
         .messages::-webkit-scrollbar-thumb {
-            background: #ff4081; /* Shiny pink scrollbar */
+            background: #ff4081;
             border-radius: 10px;
         }
 
         .messages::-webkit-scrollbar-track {
-            background: #222; /* Dark scrollbar track */
+            background: #222;
         }
     </style>
 </head>
 <body>
     <div class="chat-container">
         <div class="messages" id="messages">
-            <!-- Messages will be dynamically added here -->
-            {% for msg in messages %}
-                <div class="message received">
-                    <strong>{{ msg.username }}:</strong> {{ msg.message }} <em>{{ msg.timestamp }}</em>
+            {% for chat in chats %}
+                <div class="message {% if chat[0] == username %}sent{% else %}received{% endif %}">
+                    <strong>{{ chat[0] }}:</strong> {{ chat[2] }} <em>{{ chat[3] }}</em>
                 </div>
             {% endfor %}
         </div>
@@ -116,32 +113,36 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
     <script>
         const socket = io();
+        const username = "{{ username }}";
+        const receiver = "{{ receiver }}";
 
         function sendMessage() {
             const messageInput = document.getElementById('messageInput');
-            const message = messageInput.value.trim(); // Trim whitespace
-            const username = "User "; // Replace with actual username logic
-            const timestamp = new Date().toLocaleTimeString(); // Get current time
+            const message = messageInput.value.trim();
+            const timestamp = new Date().toISOString();
 
             if (message) {
-                const messageData = { username: username, message: message, timestamp: timestamp };
+                const messageData = { sender: username, receiver: receiver, message: message, timestamp: timestamp };
                 socket.emit('send_message', messageData);
                 addMessage(messageData, 'sent');
-                messageInput.value = ''; // Clear input
+                messageInput.value = '';
             }
         }
 
         socket.on('receive_message', function(data) {
-            addMessage(data, 'received');
+            if ((data.sender === username && data.receiver === receiver) || 
+                (data.sender === receiver && data.receiver === username)) {
+                addMessage(data, 'received');
+            }
         });
 
         function addMessage(data, type) {
             const messagesContainer = document.getElementById('messages');
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', type);
-            messageElement.innerHTML = `<strong>${data.username}:</strong> ${data.message} <em>${data.timestamp}</em>`;
+            messageElement.innerHTML = `<strong>${data.sender}:</strong> ${data.message} <em>${new Date(data.timestamp).toLocaleTimeString()}</em>`;
             messagesContainer.appendChild(messageElement);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to the bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
     </script>
 </body>
