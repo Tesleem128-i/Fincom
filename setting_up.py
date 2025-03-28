@@ -52,6 +52,23 @@ if __name__ == "__main__":
 # This is the code for the model chat bot add it to the code and template 
 
 
+@app.route("/finbot", methods=["POST"])
+def finbot():
+    data = request.json
+    prompt = data.get("prompt", "")
+
+    print(f"Received message: {prompt}")  # Debugging line
+
+    if not prompt:
+        return jsonify("Please enter a valid message.")
+
+    try:
+        response = model.generate_content(prompt)
+        print(f"AI Response: {response.text}")  # Debugging line
+        return jsonify(response.text)
+    except Exception as e:
+        print(f"AI Error: {e}")
+        return jsonify(f"AI Error: {str(e)}")
 
 
 

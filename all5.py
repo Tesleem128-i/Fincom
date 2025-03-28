@@ -43,15 +43,12 @@ def about():
 def contact():
     return render_template("contact.html")
 
-<<<<<<< HEAD
-
 
 # Define the path for profile images
 PROFILE_IMG_PATH = r"C:\Users\USER 23\Desktop\FINCOM\Fincom\static\profile_img"
 
 
-=======
->>>>>>> 87e4657e7a575590eb43bb0f0846574064810e23
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -978,7 +975,7 @@ def chatbox():
         users = conn.execute("SELECT * FROM users LIMIT 10").fetchall()
     
     conn.close()
-    return render_template('chatbox.html', users=users, search_query=search_query)  
+    return render_template('Finbot.html', users=users, search_query=search_query)  
 
 @app.route('/chat/<username>')
 def chat(username):
