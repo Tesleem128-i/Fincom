@@ -6,99 +6,50 @@
     <title>Accounting Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home1.css') }}">
     <link rel="icon" type="image/webp" href="{{ url_for('static', filename='img/logo.webp') }}">
-    <style>
-        body {
-            transition: background-image 0.5s ease; /* Smooth transition for background image */
-            background-size: cover; /* Cover the entire body */
-            background-position: center; /* Center the background image */
-        }
-
-        .nav-buttons button {
-            transition: background-color 0.3s ease, transform 0.3s ease; /* Transition for button hover */
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
-            font-size: 16px;
-        }
-
-        .nav-buttons button:hover {
-            transform: scale(1.05); /* Slightly enlarge button on hover */
-        }
-    </style>
 </head>
 <body>
 
-    <div class="container">
-        <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="Dashboard Banner" class="dashboard-image">
-        <h1>Accounting Dashboard</h1>
-
-        <div class="theme-switcher">
-            <button style="background-color: #ff4c4c;" onclick="changeTheme('#ff4c4c')"></button>
-            <button style="background-color: #4c9aff;" onclick="changeTheme('#4c9aff')"></button>
-            <button style="background-color: #4caf50;" onclick="changeTheme('#4caf50')"></button>
-            <button style="background-color: #ffcc00;" onclick="changeTheme('#ffcc00')"></button>
-            <button style="background-color: #800080;" onclick="changeTheme('#800080')"></button>
-            <button style="background-color: #ff69b4;" onclick="changeTheme('#ff69b4')"></button>
-            <button style="background-color: #808080;" onclick="changeTheme('#808080')"></button>
-            <button style="background-color: #008080;" onclick="changeTheme('#008080')"></button>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="Logo" class="logo">
+            <h2>Fincom</h2>
         </div>
+        
+        <ul class="sidebar-menu">
+            <li><a href="/expenses" onclick="changeBackground('img/bank.jpg')">Add Expense</a></li>
+            <li><a href="/get_profit" onclick="changeBackground('img/cash.jpg')">Profit</a></li>
+            <li><a href="/income" onclick="changeBackground('img/graph1.jpg')">Add Income</a></li>
+            <li><a href="/Analysis" onclick="changeBackground('img/analysis-bg.jpg')">Analysis</a></li>
+            <li><a href="/Business_advice" onclick="changeBackground('img/business-bg.jpg')">Start a New Business</a></li>
+            <li><a href="/chatbot" onclick="changeBackground('img/chatbot-bg.jpg')">Talk to our AI</a></li>
+            <li><a href="/community" onclick="changeBackground('img/community-bg.jpg')">Talk to Millionaires</a></li>
+            <li><a href="/budget" onclick="changeBackground('img/community-bg.jpg')">Create a Budget</a></li>
+        </ul>
+    </div>
 
+    <!-- Main Content -->
+    <div class="container">
+        <h1>Accounting Dashboard</h1>
         <h2>{{ message }}</h2>
         <h3>What would you like to do today?</h3>
-        
-        <div class="nav-buttons">
-            <button onclick="changeBackground(`url({{ url_for('static', filename='img/bank.jpg') }})`); window.location.href='/expenses'">Add Expense</button>
-            <button onclick="changeBackground(`url({{ url_for('static', filename='cash.jpg') }})`); window.location.href='/get_profit'">Profit</button>
-            <button onclick="changeBackground(`url({{ url_for('static', filename='img/graph1.jpg') }})`); window.location.href='/income'">Add Income</button>
-            <button onclick="changeBackground(`url({{ url_for('static', filename='img/analysis-bg.jpg') }})`); window.location.href='/Analysis'">Analysis</button>
-            <button onclick="changeBackground(`url({{ url_for('static', filename='img/business-bg.jpg') }})`); window.location.href='/Business_advice'">Start a New Business</button>
-            <button onclick="changeBackground(`url({{ url_for('static', filename='img/chatbot-bg.jpg') }})`); window.location.href='/chatbot'">Talk to our AI</button>
-            <button onclick="changeBackground(`url({{ url_for('static', filename='img/community-bg.jpg') }})`); window.location.href='/community'">Talk to Millionaires</button>
-            <button onclick="changeBackground(`url({{ url_for('static', filename='img/community-bg.jpg') }})`); window.location.href='/budget'">create a budget</button>
-        </div>
 
         <video class="dashboard-video" autoplay loop muted>
             <source src="{{ url_for('static', filename='videos/nice.mp4') }}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
     </div>
-    
-    <script>
-        function changeTheme(color) {
-            document.body.style.backgroundColor = color;
-            document.body.style.color = (color === "#111" || color === "#800080") ? "white" : "black";
-        }
-
-        function changeBackground(imageUrl) {
-            document.body.style.backgroundImage = imageUrl; // Change the background image
-        }
-
-        // Slideshow animation function
-        function startSlideshow(slideshowClass) {
-            let slides = document.querySelectorAll(`.${slideshowClass} img`);
-            let index = 0;
-
-            function showNextSlide() {
-                slides.forEach(slide => slide.style.opacity = "0");
-                slides[index].style.opacity = "1";
-                index = (index + 1) % slides.length;
-            }
-
-            setInterval(showNextSlide, 3000);
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            startSlideshow("left-slideshow");
-            startSlideshow("right-slideshow");
-        });
-    </script>
 
     <footer>
         <p>&copy; 2025 Fincom. All Rights Reserved.</p>
         <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
     </footer>
+
+    <script>
+        function changeBackground(image) {
+            document.body.style.backgroundImage = `url({{ url_for('static', filename='${image}') }})`;
+        }
+    </script>
 
 </body>
 </html>
