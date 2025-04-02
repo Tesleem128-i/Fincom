@@ -60,15 +60,53 @@
             border-radius: 8px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
         }
-        
+
+        /* Search bar styles */
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .search-bar input[type="text"] {
+            width: calc(100% - 100px); /* Adjust width to accommodate button */
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd; /* Keep border light for contrast */
+            background: rgba(255, 255, 255, 0.1); /* Light transparent background for inputs */
+            color: white; /* White text for inputs */
+        }
+
+        .search-bar button {
+            background: #ff9900; /* Orange background for buttons */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .search-bar button:hover {
+            background: #cc7a00; /* Darker orange on hover */
+        }
+
         .post-container {
             background: rgba(0, 0, 0, 0.7); /* Semi-transparent black for posts */
             padding: 15px;
             margin-top: 20px;
             border-radius: 8px;
             box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
         }
         
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .post-header h2 {
             margin: 0;
             color: #ffcc00; /* Golden color for post titles */
@@ -146,7 +184,6 @@
         <div class="logo">CommApp</div>
         <nav>
             <ul>
-                
                 <button onclick="window.location.href='/chatbox'">CHAT</button>
                 <button onclick="window.location.href='/home1'">HOME</button>
             </ul>
@@ -155,6 +192,13 @@
 
     <div class="container">
         <h1>What's on your mind?</h1>
+        
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="search" placeholder="Search by content or username..." onkeyup="filterPosts()">
+            <button onclick="filterPosts()">Search</button>
+        </div>
+
         <form action="{{ url_for('post') }}" method="POST" enctype="multipart/form-data">
             <input type="text" name="title" placeholder="Post Title" required>
             <textarea name="content" placeholder="What's on your mind?" required></textarea>
@@ -165,9 +209,9 @@
             <button type="submit">Post</button>
         </form>
 
-        <div class="posts">
+        <div class="posts" id="posts">
             {% for post in posts %}
-                <div class="post-container">
+                <div class="post-container" data-username="{{ post.username }}" data-content="{{ post.content }}">
                     <div class="post-header">
                         <h2>{{ post.title }}</h2>
                         <small>by {{ post.username }} on {{ post.timestamp }}</small>
@@ -198,6 +242,8 @@
                         {% endfor %}
                     </div>
                 </div>
+            {% else %}
+                <p>No posts found.</p>
             {% endfor %}
         </div>
     </div>
@@ -205,5 +251,24 @@
     <footer>
         <p>&copy; 2025 CommApp. All rights reserved.</p>
     </footer>
+
+    <script>
+        function filterPosts() {
+            const input = document.getElementById('search');
+            const filter = input.value.toLowerCase();
+            const posts = document.querySelectorAll('.post-container');
+
+            posts.forEach(post => {
+                const username = post.getAttribute('data-username').toLowerCase();
+                const content = post.getAttribute('data-content').toLowerCase();
+                
+                if (username.includes(filter) || content.includes(filter)) {
+                    post.style.display = ""; // Show post
+                } else {
+                    post.style.display = "none"; // Hide post
+                }
+            });
+        }
+    </script>
 </body>
 </html>

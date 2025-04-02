@@ -1103,12 +1103,15 @@ def respond(post_id):
     return redirect(url_for('community'))
 
 
-@app.route('/community')
+@app.route('/community', methods=['GET'])
 def community():
     conn = connect_db()
     conn.row_factory = sqlite3.Row  # Rows act like dictionaries
     cursor = conn.cursor()
     
+    # Get the search query from the request arguments
+    search_query = request.args.get('search', '').strip()
+
     # Fetch posts and their associated responses
     cursor.execute('''
         SELECT p.*, r.username AS response_username, r.content AS response_content, r.timestamp AS response_timestamp
@@ -1146,10 +1149,17 @@ def community():
 
     # Convert posts dictionary back to a list
     posts = list(posts.values())
-    
-    conn.close()
-    return render_template('community.html', posts=posts)
 
+    # Filter posts based on the search query
+    if search_query:
+        posts = [
+            post for post in posts
+            if search_query.lower() in post['content'].lower() or
+               search_query.lower() in post['username'].lower()
+        ]
+
+    conn.close()
+    return render_template('community.html', posts=posts, search_query=search_query)
 
 def get_db_connection():
     conn = sqlite3.connect('mydatabase.db')
@@ -1171,32 +1181,134 @@ def chatbox():
     conn.close()
     return render_template('chatbox.html', users=users, search_query=search_query)  
 
+ 
+
+
+
+
+from flask import Flask, render_template, request, jsonify
+import google.generativeai as genai
+
+# Setting up the API key and model
+genai.configure(api_key="AIzaSyByWhip1y1g6VuCnCq0avs2QrabdAk3z68")
+model = genai.GenerativeModel("gemini-1.5-flash")
+
+
+def generate_response(prompt):
+    # Prepend context about FinCom and finance
+    context = "You are a financial assistant for FinCom, providing insights and advice on finance-related topics. "
+    full_prompt = context + prompt
+    response = model.generate_content(full_prompt)
+    return response.text
+
+@app.route('/chatbot')
+def chatbot():
+    return render_template('chatbot.html')
+
+@app.route('/generate', methods=['POST'])
+def generate():
+    user_input = request.form['user_input']
+    response = generate_response(user_input)
+    return jsonify({'response': response})
+
+
+
+def get_db_connection():
+    conn = sqlite3.connect('mydatabase.db')
+    conn.row_factory = sqlite3.Row  # This allows us to access columns by name
+    return conn
+
+
+
+
+
+
+
+
 @app.route('/chatroom/<username>')
 def chatroom(username):
-    return render_template('chatroom.html', username=username)  # Pass the username to the template# Pass users to template
-
-
-
-
-
-
-messages = []
+    return render_template('chatroom.html', username=username)
 
 @socketio.on('send_message')
 def handle_send_message(data):
     print("Message received:", data['message'])  # Log the received message
-    messages.append(data)  # Store the message
     emit('receive_message', data, broadcast=True)
+def connect_db():
+    return sqlite3.connect('mydatabase.db')
+@app.route('/budget', methods=['GET', 'POST'])
+def budget():
+    print("Budget route accessed")  # Debugging line
+    if request.method == 'POST':
+        if 'user_id' not in session:
+            flash("You need to log in first!", "error")
+            return redirect('/login')
 
+        user_id = session['user_id']
+        category = request.form['category']
+        amount = request.form['amount']
 
+        # Save the budget to the database
+        conn = connect_db()
+        cursor = conn.cursor()
+        try:
+            cursor.execute('''
+                INSERT INTO budgets (user_id, category, amount)
+                VALUES (?, ?, ?)
+            ''', (user_id, category, amount))
+            conn.commit()
+            flash("Budget set successfully!", "success")
+        except sqlite3.Error as e:
+            print("Database error:", e)
+            flash("An error occurred while setting your budget.", "error")
+        finally:
+            cursor.close()
+            conn.close()
 
+        return redirect('/budget')
 
+    # GET request: fetch and display budgets
+    if 'user_id' not in session:
+        flash("You need to log in first!", "error")
+        return redirect('/login')
 
+    user_id = session['user_id']
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM budgets WHERE user_id = ?", (user_id,))
+    budgets = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template('budget.html', budgets=budgets)
+
+@app.route('/update_budget/<int:budget_id>', methods=['POST'])
+def update_budget(budget_id):
+    update_amount = request.form.get('update_amount', type=float)
+    
+    # Fetch the current budget from the database
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT amount FROM budgets WHERE id = ?", (budget_id,))
+    budget = cursor.fetchone()
+
+    if budget:
+        current_amount = budget[0]
+        new_budget_amount = current_amount - update_amount  # Adjust as needed
+        cursor.execute("UPDATE budgets SET amount = ? WHERE id = ?", (new_budget_amount, budget_id))
+        conn.commit()
+        flash('Budget updated successfully!', 'success')
+    else:
+        flash('Budget not found!', 'error')
+    
+    cursor.close()
+    conn.close()
+    return redirect(url_for('budget'))
 
 @app.route('/logout')
 def logout():
     session.clear()
     flash("You have been logged out.", "success")
+    
     return redirect('/login')
 
 

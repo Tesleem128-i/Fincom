@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Your Budget</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000; /* Black background */
+            color: #fff; /* White text */
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ff9900; /* Orange color for headings */
+            text-align: center;
+        }
+
+        form {
+            background-color: rgba(255, 153, 0, 0.1); /* Light orange background */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ff9900; /* Orange color for labels */
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ff9900; /* Orange border */
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1); /* Light transparent background */
+            color: #fff; /* White text */
+        }
+
+        button {
+            background-color: #ff9900; /* Orange background */
+            color: #fff; /* White text */
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #cc7a00; /* Darker orange on hover */
+        }
+
+        .budget-list {
+            margin-top: 20px;
+        }
+
+        .budget-item {
+            background-color: rgba(255, 153, 0, 0.1); /* Light orange background for budget items */
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .budget-item p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Set Your Budget</h1>
+    <form action="{{ url_for('budget') }}" method="POST" id="budget-form">
+        <label for="category">Budget Category:</label>
+        <input type="text" id="category" name="category" required>
+
+        <label for="amount">Budget Amount:</label>
+        <input type="number" id="amount" name="amount" required>
+
+        <button type="submit">Set Budget</button>
+    </form>
+
+    <h2>Your Budgets</h2>
+    <div class="budget-list">
+        {% for budget in budgets %}
+            <div class="budget-item">
+                <p>Category: {{ budget[2] }}</p> <!-- Assuming budget[2] is the category -->
+                <p>Amount: ${{ budget[3] }}</p> <!-- Assuming budget[3] is the amount -->
+                <p>Set on: {{ budget[4] }}</p> <!-- Assuming budget[4] is the created_at timestamp -->
+                <form action="{{ url_for('update_budget', budget_id=budget[0]) }}" method="POST" class="budget-update-form">
+                    <label for="update-amount-{{ budget[0] }}">Amount to Add/Reduce:</label>
+                    <input type="number" id="update-amount-{{ budget[0] }}" name="update_amount" required>
+                    <button type="submit">Update Budget</button>
+                </form>
+            </div>
+        {% else %}
+            <p>No budgets found.</p>
+        {% endfor %}
+    </div>
+
+    <script>
+        document.querySelectorAll('.budget-update-form').forEach(form => {
+            form.addEventListener('submit', function(event) {
+                const updateAmount = parseFloat(this.querySelector('input[name="update_amount"]').value);
+                if (isNaN(updateAmount) || updateAmount <= 0) {
+                    event.preventDefault(); // Prevent form submission if the amount is invalid
+                    alert("Please enter a valid amount to add or reduce.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

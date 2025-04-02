@@ -4,16 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notification</title>
-    <link rel="stylesheet" href="notification.css">
+    <link rel="stylesheet" href="../static/css/notification.css">
+    <link rel="icon" type="image/webp" href="../static/img/logo.webp">
 </head>
 <body>
 
     <button id="notify-btn">Show Notification</button>
 
-    <div id="notification" class="hidden">
-        <span class="close-btn">&times;</span>
-        <p><strong>Success!</strong> Your action was completed.</p>
-    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-message flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}  
+    {% endwith %}
 
     <script>
         document.getElementById("notify-btn").addEventListener("click", function() {

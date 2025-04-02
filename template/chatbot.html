@@ -3,42 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial AI Chatbot</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        .chat-container { width: 50%; margin: auto; border: 1px solid #ddd; padding: 10px; border-radius: 10px; }
-        .message { padding: 10px; margin: 5px 0; border-radius: 5px; }
-        .user { background-color: #e0f7fa; text-align: left; }
-        .bot { background-color: #e8f5e9; text-align: left; }
-    </style>
-    <script>
-        async function sendMessage() {
-            let userMessage = document.getElementById("userInput").value;
-            if (!userMessage) return;
-
-            let response = await fetch("/chatbot", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: userMessage })
-            });
-
-            let data = await response.json();
-
-            // Display chat history
-            let chatbox = document.getElementById("chatbox");
-            chatbox.innerHTML += `<div class="message user"><b>You:</b> ${userMessage}</div>`;
-            chatbox.innerHTML += `<div class="message bot"><b>Bot:</b> ${data.response} (Sentiment: ${data.sentiment})</div>`;
-
-            document.getElementById("userInput").value = "";  // Clear input
-        }
-    </script>
+    <title>Generative AI Chatbot</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="../static/css/chatbot.css">
+    <link rel="icon" type="image/webp" href="../static/img/logo.webp">
 </head>
 <body>
-    <h1>Financial AI Chatbot</h1>
-    <div class="chat-container">
-        <div id="chatbox"></div>
-        <input type="text" id="userInput" placeholder="Ask about finance..." />
-        <button onclick="sendMessage()">Send</button>
+    <div id="chat">
+        <h1>TALK TO FINCOM AI</h1>
+        <p>Welcome! I'm here to help you with your finance-related questions. How can I assist you today?</p>
+        <div id="messages"></div>
+        <div style="display: flex; justify-content: space-between;">
+            <input type="text" id="user_input" placeholder="Type your message here..." />
+            <button id="send">Send</button>
+        </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#send').click(function() {
+                var userInput = $('#user_input').val();
+                if (userInput.trim() === "") return; // Prevent empty messages
+                $('#messages').append('<div class="message user">' + userInput + '</div>');
+                $('#user_input').val('');
+
+                $.post('/generate', { user_input: userInput }, function(data) {
+                    $('#messages').append('<div class="message bot">' + data.response + '</div>');
+                    $('#messages').scrollTop($('#messages')[0].scrollHeight); // Auto-scroll to the bottom
+                });
+            });
+
+            $('#user_input').keypress(function(e) {
+                if (e.which == 13) {
+                    $('#send').click();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

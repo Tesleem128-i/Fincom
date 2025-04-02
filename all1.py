@@ -1171,24 +1171,58 @@ def chatbox():
     conn.close()
     return render_template('chatbox.html', users=users, search_query=search_query)  
 
+ 
+
+
+
+
+from flask import Flask, render_template, request, jsonify
+import google.generativeai as genai
+
+# Setting up the API key and model
+genai.configure(api_key="AIzaSyByWhip1y1g6VuCnCq0avs2QrabdAk3z68")
+model = genai.GenerativeModel("gemini-1.5-flash")
+
+
+def generate_response(prompt):
+    # Prepend context about FinCom and finance
+    context = "You are a financial assistant for FinCom, providing insights and advice on finance-related topics. "
+    full_prompt = context + prompt
+    response = model.generate_content(full_prompt)
+    return response.text
+
+@app.route('/chatbot')
+def chatbot():
+    return render_template('chatbot.html')
+
+@app.route('/generate', methods=['POST'])
+def generate():
+    user_input = request.form['user_input']
+    response = generate_response(user_input)
+    return jsonify({'response': response})
+
+
+
+def get_db_connection():
+    conn = sqlite3.connect('mydatabase.db')
+    conn.row_factory = sqlite3.Row  # This allows us to access columns by name
+    return conn
+
+
+
+
+
+
+
+
 @app.route('/chatroom/<username>')
 def chatroom(username):
-    return render_template('chatroom.html', username=username)  # Pass the username to the template# Pass users to template
-
-
-
-
-
-
-messages = []
+    return render_template('chatroom.html', username=username)
 
 @socketio.on('send_message')
 def handle_send_message(data):
     print("Message received:", data['message'])  # Log the received message
-    messages.append(data)  # Store the message
     emit('receive_message', data, broadcast=True)
-
-
 
 
 
@@ -1197,6 +1231,7 @@ def handle_send_message(data):
 def logout():
     session.clear()
     flash("You have been logged out.", "success")
+    
     return redirect('/login')
 
 

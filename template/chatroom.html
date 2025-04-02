@@ -1,149 +1,101 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Room</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
-            background-color: #121212;
-            color: #ffffff;
             font-family: Arial, sans-serif;
+            background-color: #111; /* Set background color to black */
             margin: 0;
             padding: 0;
+            color: white; /* Set default text color to white for better contrast */
         }
-
-        .chat-container {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            border: 1px solid #ff4081;
-            border-radius: 10px;
-            overflow: hidden;
+        
+        h1 {
+            text-align: center;
+            margin-top: 20px;
         }
-
-        .messages {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            border-bottom: 1px solid #ff4081;
+        
+        #messages {
+            margin: 20px;
+            padding: 10px;
+            background-color: #222; /* Darker background for the messages area */
+            border-radius: 5px;
+            height: 300px;
+            overflow-y: scroll;
         }
-
+        
+        /* Message styles */
         .message {
             margin: 10px 0;
             padding: 10px;
             border-radius: 5px;
-            position: relative;
-            max-width: 80%;
+            max-width: 70%; /* Limit the width of messages */
+            clear: both; /* Ensure messages don't float */
         }
-
-        .message.sent {
-            background-color: #ff4081;
-            align-self: flex-end;
+        
+        /* Sender message style */
+        .message.sender {
+            background-color: orange; /* Sender messages in orange */
+            color: black; /* Text color for sender messages */
+            align-self: flex-end; /* Align sender messages to the right */
         }
-
-        .message.received {
-            background-color: #333;
-            align-self: flex-start;
+        
+        /* Receiver message style */
+        .message.receiver {
+            background-color: blue; /* Receiver messages in blue */
+            color: white; /* Text color for receiver messages */
+            align-self: flex-start; /* Align receiver messages to the left */
         }
-
-        .input-container {
-            display: flex;
+        
+        #message_input {
+            margin: 20px;
             padding: 10px;
-            background-color: #222;
-        }
-
-        .input-container input {
-            flex: 1;
-            padding: 10px;
-            border: none;
+            width: 80%;
             border-radius: 5px;
-            margin-right: 10px;
-            background-color: #333;
-            color: #fff;
+            border: 1px solid #ccc;
         }
-
-        .input-container button {
-            background-color: #ff4081;
-            border: none;
+        
+        #send_button {
+            padding: 10px 20px;
             border-radius: 5px;
-            padding: 10px 15px;
+            border: none;
+            background-color: #007bff;
             color: #fff;
             cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .input-container button:hover {
-            background-color: #e91e63;
-        }
-
-        .messages::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .messages::-webkit-scrollbar-thumb {
-            background: #ff4081;
-            border-radius: 10px;
-        }
-
-        .messages::-webkit-scrollbar-track {
-            background: #222;
         }
     </style>
 </head>
 <body>
-    <div class="chat-container">
-        <div class="messages" id="messages">
-            {% for chat in chats %}
-                <div class="message {% if chat[0] == username %}sent{% else %}received{% endif %}">
-                    <strong>{{ chat[0] }}:</strong> {{ chat[2] }} <em>{{ chat[3] }}</em>
-                </div>
-            {% endfor %}
-        </div>
-        <div class="input-container">
-            <input type="text" id="messageInput" placeholder="Type your message here..." autocomplete="off">
-            <button onclick="sendMessage()">Send</button>
-        </div>
-    </div>
+    <h1>Chat Room for {{ username }}</h1>
+    <div id="messages"></div>
+    <input id="message_input" type="text" placeholder="Type your message here...">
+    <button id="send_button">Send</button>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
     <script>
         const socket = io();
-        const username = "{{ username }}";
-        const receiver = "{{ receiver }}";
-
-        function sendMessage() {
-            const messageInput = document.getElementById('messageInput');
-            const message = messageInput.value.trim();
-            const timestamp = new Date().toISOString();
-
-            if (message) {
-                const messageData = { sender: username, receiver: receiver, message: message, timestamp: timestamp };
-                socket.emit('send_message', messageData);
-                addMessage(messageData, 'sent');
-                messageInput.value = '';
-            }
-        }
-
-        socket.on('receive_message', function(data) {
-            if ((data.sender === username && data.receiver === receiver) || 
-                (data.sender === receiver && data.receiver === username)) {
-                addMessage(data, 'received');
-            }
+    
+        // Send message on button click
+        $('#send_button').click(function() {
+            const message = $('#message_input').val();
+            const username = "{{ username }}"; // Assuming you have the username available
+            socket.emit('send_message', { message: message, sender: username });
+            $('#message_input').val(''); // Clear input
         });
-
-        function addMessage(data, type) {
-            const messagesContainer = document.getElementById('messages');
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message', type);
-            messageElement.innerHTML = `<strong>${data.sender}:</strong> ${data.message} <em>${new Date(data.timestamp).toLocaleTimeString()}</em>`;
-            messagesContainer.appendChild(messageElement);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
+    
+        // Receive message
+        socket.on('receive_message', function(data) {
+            const messageClass = data.sender === "{{ username }}" ? 'sender' : 'receiver'; // Determine message class
+            $('#messages').append('<div class="message ' + messageClass + '">' + data.message + '</div>');
+            $('#messages').scrollTop($('#messages')[0].scrollHeight); // Auto-scroll to the bottom
+        });
     </script>
 </body>
 </html>
