@@ -43,21 +43,11 @@ def about():
 def contact():
     return render_template("contact.html")
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> fe40e69085fdcccbec0b1c718e360df039f11f9a
 
 # Define the path for profile images
-PROFILE_IMG_PATH = r"C:\Users\USER 24\Desktop\FINCOM\Fincom\static\profile_img"
+PROFILE_IMG_PATH = "C:\Users\USER 23\Desktop\FINCOM\Fincom\static\profile_img"
 
 
-
-<<<<<<< HEAD
-=======
-
->>>>>>> fe40e69085fdcccbec0b1c718e360df039f11f9a
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
