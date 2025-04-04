@@ -25,14 +25,14 @@
         <p>Create an Account</p>
         <form id="signupForm" action="{{ url_for('signup') }}" method="POST" onsubmit="return validateForm()">
             <div class="input-box">
-                <input type="text" name="username" placeholder="Username" required aria-label="Username">
+                <input type="text" name="username" placeholder="Username or Company username" required aria-label="Username or Company username">
             </div>
             <div class="input-box">
-                <input type="text" name="fullname" placeholder="Full Name" required aria-label="Full Name">
+                <input type="text" name="fullname" placeholder="FullName or Company Name" required aria-label="FullName or Company Name">
             </div>
 
             <div class="input-box">
-                <input type="profession" name="profession" placeholder="profession" required aria-label="Profession">
+                <input type="text" name="profession" placeholder="Profession or Industry" required aria-label="Profession or Industry">
             </div>
             <div class="input-box">
                 <input type="email" name="email" placeholder="Email Address" required aria-label="Email">
@@ -57,13 +57,24 @@
             </div>
            
             <div class="customer-type">
-                <input type="radio" id="family" name="customer_type" value="family" required>
-                <label for="family">Family</label>
-                <input type="radio" id="company" name="customer_type" value="company" required>
+        
+                <input type="radio" id="company" name="customer_type" value="company" required onclick="toggleWorkerInput()">
                 <label for="company">Company</label>
-                <input type="radio" id="individual" name="customer_type" value="individual" required>
+                <input type="radio" id="individual" name="customer_type" value="individual" required onclick="toggleWorkerInput()">
                 <label for="individual">Individual</label>
             </div>
+
+            <!-- Number of Workers Dropdown -->
+            <div class="input-box" id="workers-input" style="display: none;">
+                <select name="number_of_workers" aria-label="Number of Workers">
+                    <option value="" disabled selected>Select Number of Workers</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+
             <button type="submit" class="signup-btn">Sign Up</button>
         </form>
         <p>Already have an account? <a href="{{ url_for('login') }}" class="btn">Login</a></p>
@@ -91,6 +102,17 @@
 
             errorMessage.style.display = 'none';
             return true;
+        }
+
+        function toggleWorkerInput() {
+            const companyRadio = document.getElementById('company');
+            const workersInput = document.getElementById('workers-input');
+
+            if (companyRadio.checked) {
+                workersInput.style.display = 'block';
+            } else {
+                workersInput.style.display = 'none';
+            }
         }
     </script>
 </body>

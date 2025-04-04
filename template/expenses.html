@@ -18,7 +18,14 @@
         {% endfor %}
       {% endif %}  
     {% endwith %}
-    
+    <div>
+      <h2>Chatbot for Transactions</h2>
+      <form id="transaction-form">
+          <input type="text" id="user-input" placeholder="Type your transaction (e.g., I spent $500 on entertainment)" required>
+          <button type="submit">Submit</button>
+      </form>
+      <div id="response"></div>
+  </div>
     <form action="{{ url_for('expenses') }}" method="POST">
       <label for="name">Your Name:</label>
       <input type="text" name="name" id="name" required placeholder="Enter your name">
@@ -57,5 +64,29 @@
       <button type="button" class="back-button" onclick="window.history.back();">Back</button> <!-- Back button -->
     </form>
   </div>
+  <script>
+    document.getElementById('transaction-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const userInput = document.getElementById('user-input').value;
+
+        fetch('/chatbot_transaction', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'user_input': userInput
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('response').innerText = data.success || data.error;
+            document.getElementById('user-input').value = ''; // Clear input
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>
 </body>
 </html>

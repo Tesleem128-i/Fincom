@@ -57,6 +57,7 @@ def signup():
         confirm_password = request.form['confirm_password']
         nationality = request.form['nationality']
         customer_type = request.form['customer_type']
+        number_of_workers = request.form.get('number_of_workers')  # Get the number of workers
 
         # Check if all required fields are filled
         if not username or not email or not password or not customer_type:
@@ -68,7 +69,7 @@ def signup():
             flash("Passwords do not match!", "error")
             return redirect('/signup')
 
-        # Hash the password
+        # Hash the password using Flask-Bcrypt
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
         conn = sqlite3.connect("mydatabase.db")
@@ -99,7 +100,8 @@ def signup():
                 'password': hashed_password,
                 'nationality': nationality,
                 'customer_type': customer_type,
-                'pin': pin
+                'pin': pin,
+                'number_of_workers': number_of_workers if customer_type == 'company' else None  # Store only if company
             }
 
             flash("A verification PIN has been sent to your email. Please check your inbox.", "success")
@@ -115,45 +117,46 @@ def signup():
 
     return render_template('signup.html')
 
-
 @app.route('/verify_pin', methods=['GET', 'POST'])
 def verify_pin():
     if request.method == 'POST':
         entered_pin = request.form['pin']
-        pending_user = session.get('pending_user')
-        print(f"Entered PIN: {entered_pin}, Pending User: {pending_user}")  # Debugging line
-
-        if pending_user and str(pending_user['pin']) == entered_pin:
-            # Check if the user already exists before inserting
+        if entered_pin == str(session['pending_user']['pin']):
+            # Insert user into the database
             conn = sqlite3.connect("mydatabase.db")
             cursor = conn.cursor()
-            try:
-                cursor.execute("SELECT * FROM users WHERE email = ?", (pending_user['email'],))
-                existing_user = cursor.fetchone()
-                if existing_user:
-                    flash("This email is already registered. Please log in.", "error")
-                    return redirect('/login')
+            cursor.execute('''
+                INSERT INTO users (username, fullname, profession, email, password, nationality, customer_type)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                session['pending_user']['username'],
+                session['pending_user']['fullname'],
+                session['pending_user']['profession'],
+                session['pending_user']['email'],
+                session['pending_user']['password'],
+                session['pending_user']['nationality'],
+                session['pending_user']['customer_type']
+            ))
+            user_id = cursor.lastrowid
 
-                # Insert new user into the database
-                cursor.execute("""
-                    INSERT INTO users (username, fullname, email, password, nationality, customer_type)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                """, (pending_user['username'], pending_user['fullname'], pending_user['email'],
-                      pending_user['password'], pending_user['nationality'], pending_user['customer_type']))
-                conn.commit()
-                flash("Signup successful! You can now log in.", "success")
-                session.pop('pending_user', None)  # Clear the pending user data
-                return redirect('/login')
-            except sqlite3.Error as e:
-                print(f"An error occurred: {e}")
-                flash("An error occurred while signing up. Please try again.", "error")
-            finally:
-                cursor.close()
-                conn.close()
+            # Insert workers if the customer type is company
+            if session['pending_user']['number_of_workers'] is not None:
+                for i in range(int(session['pending_user']['number_of_workers'])):
+                    cursor.execute("INSERT INTO workers (user_id, worker_name) VALUES (?, ?)", (user_id, f"Worker {i + 1}"))
+
+            conn.commit()
+            cursor.close()
+            conn.close()
+
+            flash("Registration successful! You can now log in.", "success")
+            return redirect('/login')  # Ensure you return a valid response here
         else:
             flash("Invalid PIN. Please try again.", "error")
+            return redirect('/verify_pin')  # Ensure you return a valid response here
 
-    return render_template('verify_pin.html')
+    # If the request method is GET, render the verification page
+    return render_template('verify_pin.html')  # Ensure you return a valid response here
+
 
 from itsdangerous import URLSafeTimedSerializer
 
@@ -386,7 +389,7 @@ def update_profit(user_id):
             cursor.close()
             conn.close()
 
-def add_expenses(submitter_name, expense_type, account, category, description, amount, quantity):
+def add_expenses(submitter_name, expense_type, payment_method, category, description, amount, quantity):
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
@@ -406,7 +409,7 @@ def add_expenses(submitter_name, expense_type, account, category, description, a
             cursor.execute("""
                 INSERT INTO transactions (user_id, name, type, account, category, description, amount, quantity)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (user_id, submitter_name, expense_type, account, category, description, total_amount, quantity))
+            """, (user_id, submitter_name, expense_type, payment_method, category, description, total_amount, quantity))
 
             # Update user profit
             cursor.execute("""
@@ -415,6 +418,20 @@ def add_expenses(submitter_name, expense_type, account, category, description, a
                     total_expenses = COALESCE(total_expenses, 0) + ?
                 WHERE id = ?
             """, (total_amount, total_amount, user_id))
+
+            # Update cash or card balance
+            if payment_method.lower() == 'cash':
+                cursor.execute("""
+                    UPDATE users
+                    SET cash_balance = COALESCE(cash_balance, 0) - ?
+                    WHERE id = ?
+                """, (total_amount, user_id))
+            elif payment_method.lower() == 'card':
+                cursor.execute("""
+                    UPDATE users
+                    SET card_balance = COALESCE(card_balance, 0) - ?
+                    WHERE id = ?
+                """, (total_amount, user_id))
 
             conn.commit()
             flash("Expense added successfully!", "success")
@@ -472,7 +489,7 @@ def total_expenses():
     return render_template('total_expenses.html', total=sum_total_expenses())
 
 # Function to add an income
-def add_income(submitter_name, income_type, account, category, description, amount, quantity):
+def add_income(submitter_name, income_type, payment_method, category, description, amount, quantity):
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
@@ -492,7 +509,7 @@ def add_income(submitter_name, income_type, account, category, description, amou
             cursor.execute("""
                 INSERT INTO transactions (user_id, name, type, account, category, description, amount, quantity)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (user_id, submitter_name, income_type, account, category, description, total_amount, quantity))
+            """, (user_id, submitter_name, income_type, payment_method, category, description, total_amount, quantity))
 
             # Update user profit
             cursor.execute("""
@@ -501,6 +518,20 @@ def add_income(submitter_name, income_type, account, category, description, amou
                     total_income = COALESCE(total_income, 0) + ?
                 WHERE id = ?
             """, (total_amount, total_amount, user_id))
+
+            # Update cash or card balance
+            if payment_method.lower() == 'cash':
+                cursor.execute("""
+                    UPDATE users
+                    SET cash_balance = COALESCE(cash_balance, 0) + ?
+                    WHERE id = ?
+                """, (total_amount, user_id))
+            elif payment_method.lower() == 'card':
+                cursor.execute("""
+                    UPDATE users
+                    SET card_balance = COALESCE(card_balance, 0) + ?
+                    WHERE id = ?
+                """, (total_amount, user_id))
 
             conn.commit()
             flash("Income added successfully!", "success")
@@ -1103,12 +1134,15 @@ def respond(post_id):
     return redirect(url_for('community'))
 
 
-@app.route('/community')
+@app.route('/community', methods=['GET'])
 def community():
     conn = connect_db()
     conn.row_factory = sqlite3.Row  # Rows act like dictionaries
     cursor = conn.cursor()
     
+    # Get the search query from the request arguments
+    search_query = request.args.get('search', '').strip()
+
     # Fetch posts and their associated responses
     cursor.execute('''
         SELECT p.*, r.username AS response_username, r.content AS response_content, r.timestamp AS response_timestamp
@@ -1146,10 +1180,17 @@ def community():
 
     # Convert posts dictionary back to a list
     posts = list(posts.values())
-    
-    conn.close()
-    return render_template('community.html', posts=posts)
 
+    # Filter posts based on the search query
+    if search_query:
+        posts = [
+            post for post in posts
+            if search_query.lower() in post['content'].lower() or
+               search_query.lower() in post['username'].lower()
+        ]
+
+    conn.close()
+    return render_template('community.html', posts=posts, search_query=search_query)
 
 def get_db_connection():
     conn = sqlite3.connect('mydatabase.db')
@@ -1186,21 +1227,63 @@ model = genai.GenerativeModel("gemini-1.5-flash")
 
 def generate_response(prompt):
     # Prepend context about FinCom and finance
-    context = "You are a financial assistant for FinCom, providing insights and advice on finance-related topics. "
-    full_prompt = context + prompt
-    response = model.generate_content(full_prompt)
-    return response.text
+    context = "You are FinBot, a financial assistant for FinCom. Provide concise and relevant responses to user queries."
+    
+    # Check if the user is logged in
+    if 'user_id' not in session:
+        return "Please log in to use FinBot's services."
 
+    user_id = session['user_id']  # Get the logged-in user's ID
+
+    # Keywords to trigger financial information retrieval
+    keywords = ["financial summary", "financial information", "my finances", "income", "expenses", "profit", "balance", "business"]
+
+    # Check if the user's prompt contains any of the keywords
+    if any(keyword in prompt.lower() for keyword in keywords):
+        # Connect to the database and retrieve user-specific data
+        conn = sqlite3.connect("mydatabase.db")
+        conn.row_factory = sqlite3.Row  # Access columns by name
+        cursor = conn.cursor()
+        
+        try:
+            # Fetch data for the logged-in user
+            cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+            user = cursor.fetchone()
+            
+            if user:
+                # Format user data into a brief summary
+                user_data = f"User: {user['fullname']} (Username: {user['username']})\n" \
+                            f"Profit: {user['profit']}, Income: {user['total_income']}, Expenses: {user['total_expenses']}\n" \
+                            f"Cash Balance: {user['cash_balance']}, Card Balance: {user['card_balance']}, Savings: {user['savings_balance']}"
+                context += f"\nHere is your financial summary:\n{user_data}\n"
+            else:
+                context += "\nNo financial data found for your account.\n"
+        except sqlite3.Error as e:
+            print(f"Database error: {e}")
+            context += "\nUnable to retrieve financial data due to a database error.\n"
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        # If no keywords are detected, provide a brief generic response
+        context += "\nHow can I assist you today? Please ask specific questions about your finances or business ideas."
+
+    # Combine the context with the user's prompt
+    full_prompt = context + "\n" + prompt
+    
+    # Generate a response using the AI model
+    response = model.generate_content(full_prompt)
+    
+    # Limit the response length to keep it concise
+    return response.text[:500]  # Truncate response to 500 characters
 @app.route('/chatbot')
 def chatbot():
     return render_template('chatbot.html')
-
 @app.route('/generate', methods=['POST'])
 def generate():
     user_input = request.form['user_input']
     response = generate_response(user_input)
     return jsonify({'response': response})
-
 
 
 def get_db_connection():
@@ -1223,10 +1306,141 @@ def chatroom(username):
 def handle_send_message(data):
     print("Message received:", data['message'])  # Log the received message
     emit('receive_message', data, broadcast=True)
+def connect_db():
+    return sqlite3.connect('mydatabase.db')
+@app.route('/budget', methods=['GET', 'POST'])
+def budget():
+    print("Budget route accessed")  # Debugging line
+    if request.method == 'POST':
+        if 'user_id' not in session:
+            flash("You need to log in first!", "error")
+            return redirect('/login')
+
+        user_id = session['user_id']
+        category = request.form['category']
+        amount = request.form['amount']
+
+        # Save the budget to the database
+        conn = connect_db()
+        cursor = conn.cursor()
+        try:
+            cursor.execute('''
+                INSERT INTO budgets (user_id, category, amount)
+                VALUES (?, ?, ?)
+            ''', (user_id, category, amount))
+            conn.commit()
+            flash("Budget set successfully!", "success")
+        except sqlite3.Error as e:
+            print("Database error:", e)
+            flash("An error occurred while setting your budget.", "error")
+        finally:
+            cursor.close()
+            conn.close()
+
+        return redirect('/budget')
+
+    # GET request: fetch and display budgets
+    if 'user_id' not in session:
+        flash("You need to log in first!", "error")
+        return redirect('/login')
+
+    user_id = session['user_id']
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM budgets WHERE user_id = ?", (user_id,))
+    budgets = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template('budget.html', budgets=budgets)
+
+@app.route('/update_budget/<int:budget_id>', methods=['POST'])
+def update_budget(budget_id):
+    update_amount = request.form.get('update_amount', type=float)
+    
+    # Fetch the current budget from the database
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT amount FROM budgets WHERE id = ?", (budget_id,))
+    budget = cursor.fetchone()
+
+    if budget:
+        current_amount = budget[0]
+        new_budget_amount = current_amount - update_amount  # Adjust as needed
+        cursor.execute("UPDATE budgets SET amount = ? WHERE id = ?", (new_budget_amount, budget_id))
+        conn.commit()
+        flash('Budget updated successfully!', 'success')
+    else:
+        flash('Budget not found!', 'error')
+    
+    cursor.close()
+    conn.close()
+    return redirect(url_for('budget'))
 
 
+@app.route('/chatbot_transaction', methods=['POST'])
+def chatbot_transaction():
+    if 'username' not in session:
+        return jsonify({"error": "Unauthorized access"}), 401
 
+    user_id = session['user_id']
+    user_input = request.form.get('user_input', '')
 
+    # Parse the transaction input
+    amount, category, transaction_type, payment_method = parse_transaction_input(user_input)
+
+    if amount is None or category is None or transaction_type is None:
+        return jsonify({"error": "Invalid input format. Please specify the amount and category."}), 400
+
+    # Add the transaction to the database
+    if transaction_type == 'expense':
+        add_expenses(session['username'], transaction_type, payment_method, category, '', amount, 1)
+    elif transaction_type == 'income':
+        add_income(session['username'], transaction_type, payment_method, category, '', amount, 1)
+
+    return jsonify({"success": f"{transaction_type.capitalize()} of ${amount} added under category '{category}' using {payment_method}."})
+
+def parse_transaction_input(input_string):
+    """Parse the transaction input string to extract amount, category, and transaction type."""
+    
+    # Regular expression to find the amount
+    amount_match = re.search(r'\$?(\d+(\.\d{1,2})?)', input_string)
+    
+    if amount_match:
+        amount = float(amount_match.group(1))  # Extract the amount
+    else:
+        return None, None, None  # Return None if no amount is found
+
+    # Determine transaction type and category
+    transaction_type = None
+    category = None
+    payment_method = 'Cash'  # Default payment method
+
+    # Check for keywords to determine transaction type
+    if 'spent' in input_string or 'expense' in input_string or 'from' in input_string:
+        transaction_type = 'expense'
+    elif 'gained' in input_string or 'earned' in input_string or 'through' in input_string:
+        transaction_type = 'income'
+
+    # Check for payment method
+    if 'card' in input_string.lower():
+        payment_method = 'Card'
+    elif 'cash' in input_string.lower():
+        payment_method = 'Cash'
+
+    # Extract the category based on common phrases
+    # This regex captures everything after the amount and any keywords
+    category_match = re.split(r'\$?\d+(\.\d{1,2})?|\b(spent|gained|earned|from|through|on|as)\b', input_string, flags=re.IGNORECASE)
+    
+    if len(category_match) > 1:
+        # Get the text after the amount and keywords, and clean it up
+        category = category_match[-1].strip()  # Get the last part after the split
+        if category:  # Check if category is not empty
+            return amount, category, transaction_type, payment_method
+        else:
+            return None, None, None, None  # Return None if category is empty
+    else:
+        return None, None, None, None  # Return None if no category is found # Return None if no category is found
 @app.route('/logout')
 def logout():
     session.clear()
@@ -1236,4 +1450,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True)

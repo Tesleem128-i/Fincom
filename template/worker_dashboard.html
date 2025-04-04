@@ -6,7 +6,6 @@
     <title>Accounting Dashboard</title>
     <link rel="stylesheet" href="../static/css/home.css">
     <link rel="icon" type="image/webp" href="../static/img/logo.webp">
-
 </head>
 <body>
     <div class="container">
@@ -21,13 +20,15 @@
             <button class="gray" onclick="changeTheme('#808080')"></button>
             <button class="teal" onclick="changeTheme('#008080')"></button>
         </div>
-        <div class="container">
-            <h1>{{ message }}</h1>
-            <h2>What would you like to do today?</h2>
-           
-                <!-- Add more actions as needed -->
-            
+
+        <div class="company-info">
+            <h2>Company Information</h2>
+            <p><strong>Company Name:</strong> {{ company[0] }}</p>
+            <p><strong>Email:</strong> {{ company[1] }}</p>
+            <p><strong>Profession:</strong> {{ company[2] }}</p>
         </div>
+
+        <h2>What would you like to do today?</h2>
         <div class="nav-buttons">
             <button onclick="changeBackground(`url({{ url_for('static', filename='img/bank.jpg') }})`); window.location.href='/expenses'">Add Expense</button>
             <button onclick="changeBackground(`url({{ url_for('static', filename='cash.jpg') }})`); window.location.href='/get_profit'">Profit</button>
@@ -37,8 +38,8 @@
             <button onclick="changeBackground(`url({{ url_for('static', filename='img/invite.jpg') }})`); window.location.href='/manage_workers'">Manage workers</button>
             <button onclick="changeBackground(`url({{ url_for('static', filename='img/chatbot-bg.jpg') }})`); window.location.href='/chatbot'">Talk to our AI</button>
             <button onclick="changeBackground(`url({{ url_for('static', filename='img/community-bg.jpg') }})`); window.location.href='/community'">Talk to Millionaires</button>
-            <button onclick="changeBackground(`url({{ url_for('static', filename='img/community-bg.jpg') }})`); window.location.href='/budget'">create a budget</button>
-            <button onclick="changeBackground(`url({{ url_for('static', filename='img/community-bg.jpg') }})`); window.location.href='/worker_dashboard'">veiw company info</button>
+            <button onclick="changeBackground(`url({{ url_for('static', filename='img/community-bg.jpg') }})`); window.location.href='/budget'">Create a budget</button>
+            <button onclick="changeBackground(`url({{ url_for('static', filename='img/community-bg.jpg') }})`); window.location.href='/worker_dashboard'">View Company Info</button>
         </div>
     </div>
 
