@@ -3,8 +3,8 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #111;
-    color: white;
+    background-color: #f8f8f8; /* Off-white background */
+    color: #002147; /* Dark Blue text */
     transition: background-color 0.3s, color 0.3s;
 }
 
@@ -17,8 +17,9 @@ body {
 
 /* Navbar */
 header {
-    background-color: #222;
+    background-color: #002147; /* Dark Blue */
     padding: 20px 0;
+    color: white;
 }
 
 header .container {
@@ -36,7 +37,7 @@ header .container {
 /* Navbar Links */
 header h1 {
     font-size: 24px;
-    color: #f4b400;
+    color: gold; /* Gold header */
 }
 
 nav ul {
@@ -58,19 +59,21 @@ nav ul li a {
 }
 
 nav ul li a:hover {
-    color: #f4b400;
+    color: gold;
 }
 
 /* Hero Section */
 .hero {
     padding: 100px 0;
-    background: linear-gradient(to right, #222, #333);
+    background: linear-gradient(to right, #002147, #004080);
     text-align: center;
+    color: white;
 }
 
 .hero h2 {
     font-size: 36px;
     margin-bottom: 10px;
+    color: gold;
 }
 
 .hero p {
@@ -78,29 +81,33 @@ nav ul li a:hover {
     margin-bottom: 20px;
 }
 
+/* Buttons */
 .btn {
     display: inline-block;
     padding: 12px 24px;
-    background-color: #f4b400;
-    color: #222;
+    background-color: gold;
+    color: #002147;
     font-size: 18px;
     text-decoration: none;
     border-radius: 5px;
-    transition: background-color 0.3s;
+    transition: 0.3s;
+    font-weight: bold;
 }
 
 .btn:hover {
     background-color: #ffcc00;
+    transform: scale(1.05);
 }
 
 /* Features Section */
 .features {
     padding: 60px 0;
-    background-color: #181818;
+    background-color: #e6e6e6; /* Light Gray */
 }
 
 .features h2 {
     margin-bottom: 30px;
+    color: #002147;
 }
 
 /* Feature Grid */
@@ -114,10 +121,11 @@ nav ul li a:hover {
 .feature {
     width: 300px;
     padding: 20px;
-    background-color: #222;
+    background-color: white;
     border-radius: 10px;
     text-align: center;
     transition: transform 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .feature:hover {
@@ -135,17 +143,20 @@ nav ul li a:hover {
 /* Call-to-Action */
 .cta {
     padding: 80px 0;
-    background: linear-gradient(to right, #333, #444);
+    background: linear-gradient(to right, #004080, #002147);
+    text-align: center;
+    color: white;
 }
 
 .cta h2 {
     margin-bottom: 20px;
+    color: gold;
 }
 
 /* Image Gallery */
 .image-gallery {
     padding: 60px 0;
-    background-color: #222;
+    background-color: #f8f8f8;
 }
 
 .image-gallery .gallery-grid {
@@ -169,9 +180,10 @@ nav ul li a:hover {
 
 /* Footer */
 footer {
-    background-color: #111;
+    background-color: #002147;
     padding: 20px 0;
     text-align: center;
+    color: white;
 }
 
 /* Color Switcher */
@@ -192,7 +204,6 @@ footer {
 }
 
 .red { background-color: #ff4c4c; }
-.blue { background-color: #4c9aff; }
+.blue { background-color: #004080; }
 .green { background-color: #4caf50; }
-.yellow { background-color: #ffcc00; }
- 
+.yellow { background-color: gold; }
