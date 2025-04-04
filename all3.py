@@ -520,7 +520,7 @@ def expenses():
             add_expenses(submitter_name, expense_type, account, category, description, amount, quantity)
             update_profit(session.get('user_id'))  # Update user profit
 
-            return redirect('/home1')
+            return redirect(url_for('expenses')) 
 
         except (KeyError, ValueError):
             flash("Please fill in all fields correctly.", "error")
