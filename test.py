@@ -1,18 +1,37 @@
 import sqlite3
 
-# Connect to the SQLite database (or create it if it doesn't exist)
-conn = sqlite3.connect('mydatabase.db')
+def add_columns_to_database():
+    # Connect to the database
+    conn = sqlite3.connect("mydatabase.db")
+    cursor = conn.cursor()
 
-# Create a cursor object to execute SQL commands
-cursor = conn.cursor()
+    try:
+        # Add 'number_of_workers' column to the 'users' table if it doesn't exist
+        cursor.execute("PRAGMA table_info(users)")
+        columns = [column[1] for column in cursor.fetchall()]
+        if 'number_of_workers' not in columns:
+            cursor.execute("ALTER TABLE users ADD COLUMN number_of_workers INTEGER DEFAULT 0")
+            print("Added 'number_of_workers' column to 'users' table.")
 
-# SQL command to add a new column 'profession' to the 'users' table
-try:
-    cursor.execute("ALTER TABLE users ADD COLUMN profession TEXT;")
-    print("Column 'profession' added successfully.")
-except sqlite3.OperationalError as e:
-    print(f"An error occurred: {e}")
+        # Add 'email' column to the 'workers' table if it doesn't exist
+        cursor.execute("PRAGMA table_info(workers)")
+        columns = [column[1] for column in cursor.fetchall()]
+        if 'email' not in columns:
+            cursor.execute("ALTER TABLE workers ADD COLUMN email TEXT")
+            print("Added 'email' column to 'workers' table.")
 
-# Commit the changes and close the connection
-conn.commit()
-conn.close()
+        # Add 'status' column to the 'workers' table if it doesn't exist
+        if 'status' not in columns:
+            cursor.execute("ALTER TABLE workers ADD COLUMN status TEXT DEFAULT 'Pending'")
+            print("Added 'status' column to 'workers' table.")
+
+        conn.commit()
+        print("Database schema updated successfully.")
+    except sqlite3.Error as e:
+        print(f"An error occurred while updating the database schema: {e}")
+    finally:
+        cursor.close()
+        conn.close()
+
+# Run the function to update the database schema
+add_columns_to_database()
