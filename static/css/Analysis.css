@@ -1,18 +1,20 @@
 :root {
-  --primary-color: #002147; /* Dark Blue */
-  --secondary-color: gold; /* Gold */
-  --accent-color: rgba(255, 255, 255, 0.441);
-  --background-color: #f8f8f8; /* Light Gray */
-  --hover-color: #ffcc00; /* Lighter Gold */
-  --text-color: #002147;
-  --btn-text-color: #002147;
-  --btn-bg-color: gold;
-  --btn-hover-bg: #645f4b;
+  --color-navy: #1A2A4D; /* Muted Navy */
+  --color-gold: #D4AF37; /* Muted Gold */
+  --color-light-grey: #F7F7F7; /* Very Light Grey */
+  --color-deep-blue: #2C3E50; /* Softer Deep Blue */
+  --color-white: #FFFFFF; /* White */
+  --color-medium-grey: #B0B0B0; /* Lighter Grey */
+  --highlight-gold: #FFC107; /* Warm Gold */
+  --shadow-color: rgba(0, 0, 0, 0.2); /* Softer Shadow Color */
+
+  --background-gradient: linear-gradient(290deg, var(--color-navy), var(--color-deep-blue));
+  --color-accent: linear-gradient(to right, var(--color-gold));
 }
 
 body {
-  background: linear-gradient(135deg, #000000, #1a1a1a);
-  color: var(--secondary-color);
+  background: var(--background-gradient); /* Use the background gradient */
+  color: var(--color-white); /* Use white for text color */
   font-family: "Poppins", Arial, sans-serif;
   margin: 0;
   padding: 0;
@@ -29,9 +31,9 @@ body {
   width: 100vw;
   min-height: 100vh; /* Changed to min-height for better content visibility */
   padding: 40px;
-  background: var(--accent-color);
-  border-radius: 0;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.7);
+  background: var(--color-deep-blue); /* Use deep blue for the container background */
+  border-radius: 8px; /* Slightly rounded corners for a softer look */
+  box-shadow: 0 12px 24px var(--shadow-color); /* Use shadow color */
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -41,15 +43,14 @@ body {
 /* Headings */
 h1 {
   font-size: 3em;
-  margin-bottom: 20px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  color: #002147; /* Classic Navy Blue */
+  margin-bottom: 20px; 
+  color: var(--color-accent); /* Use muted navy for headings */
 }
 
 h2 {
   font-size: 2em;
   margin: 20px 0 10px;
-  color: var(--btn-bg-color); /* Classic Gold */
+  color: var(--color-gold); /* Use muted gold for subheadings */
 }
 
 /* Paragraphs */
@@ -57,6 +58,7 @@ p {
   font-size: 1.2em;
   margin-bottom: 20px;
   line-height: 1.5;
+  color: var(--color-white); /* Use white for paragraph text */
 }
 
 /* Input Fields */
@@ -66,21 +68,21 @@ input, select, textarea {
   margin: 12px 0;
   border: none;
   border-radius: 8px;
-  background-color: #444;
-  color: #FFD700;
+  background-color: var(--color-medium-grey); /* Use lighter grey for input background */
+  color: var(--color-navy); /* Use muted navy for input text */
   font-size: 16px;
   transition: background 0.3s;
 }
 
 input:focus, select:focus, textarea:focus {
-  background-color: #555;
+  background-color: var(--color-light-grey); /* Use very light grey on focus */
   outline: none;
 }
 
 /* Buttons */
 button {
-  background: linear-gradient(90deg, #002147, #0056b3);
-  color: white;
+  background: var(--color-accent); /* Use accent color for button background */
+  color: var(--color-white); /* Use white for button text */
   padding: 16px 32px;
   border: none;
   border-radius: 8px;
@@ -88,55 +90,28 @@ button {
   font-size: 18px;
   transition: background 0.3s, transform 0.2s;
   margin-top: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 8px var(--shadow-color); /* Use shadow color */
 }
 
 button:hover {
-  background: linear-gradient(90deg, #0056b3, #002147);
-  transform: scale(1.05);
+  background: linear-gradient(90deg, var(--highlight-gold), var(--color-navy));
 }
-
-/* Flash Messages */
-.flash-message {
-  margin: 12px 0;
-  padding: 16px;
-  border-radius: 8px;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.flash-success {
-  background-color: #4caf50;
-}
-
-.flash-error {
-  background-color: #f44336;
-}
-
-/* Labels */
-label {
-  font-weight: bold;
-  font-size: 18px;
-  display: block;
-  margin-bottom: 8px;
-}
-
 /* Diamond Effect */
 .diamond {
   position: absolute;
-  width: 100px;
-  height: 100px;
-  background: rgba(255, 255, 255, 0.1);
-  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-  box-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
-  animation: sparkle 2s infinite alternate;
+  width: 100px; /* Width of the diamond */
+  height: 100px; /* Height of the diamond */
+  background: rgba(255, 255, 255, 0.1); /* Default diamond color */
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); /* Diamond shape */
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5); /* Soft glow effect */
+  animation: sparkle 2s infinite alternate; /* Animation for sparkle effect */
   z-index: 0; /* Ensure diamonds are below content */
 }
 
+/* Orange Diamond Variation */
 .diamond.orange {
-  background: rgba(255, 165, 0, 0.5); /* Orange diamond */
-  box-shadow: 0 0 20px rgba(255, 165, 0, 0.7);
+  background: rgba(255, 165, 0, 0.5); /* Orange diamond color */
+  box-shadow: 0 0 20px rgba(255, 165, 0, 0.7); /* Glow effect for orange diamonds */
 }
 
 /* Positioning Diamonds */
@@ -160,22 +135,5 @@ label {
   100% {
     transform: scale(1.1);
     opacity: 1;
-  }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .container {
-    padding: 20px;
-  }
-  h1 {
-    font-size: 2em;
-  }
-  h2 {
-    font-size: 1.5em;
-  }
-  button {
-    padding: 12px 24px;
-    font-size: 16px;
   }
 }
