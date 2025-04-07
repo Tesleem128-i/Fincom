@@ -1,0 +1,78 @@
+:root {
+    --color-navy: #1A2A4D; /* Muted Navy */
+    --color-gold: #D4AF37; /* Muted Gold */
+    --color-light-grey: #F7F7F7; /* Very Light Grey */
+    --color-deep-blue: #2C3E50; /* Softer Deep Blue */
+    --color-white: #FFFFFF; /* White */
+    --color-medium-grey: #B0B0B0; /* Lighter Grey */
+    --highlight-gold: #FFC107; /* Warm Gold */
+    --shadow-color: rgba(0, 0, 0, 0.2); /* Softer Shadow Color */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--color-navy); /* Muted Navy Background */
+    color: var(--color-white); /* White text */
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    color: var(--color-gold); /* Muted Gold for headings */
+    text-align: center;
+}
+
+form {
+    background-color: rgba(255, 255, 255, 0.1); /* Light transparent background */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px var(--shadow-color);
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--color-white); /* White color for labels */
+}
+
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid var(--color-light-grey); /* Light Grey border */
+    border-radius: 5px;
+    background-color: var(--color-white); /* White background */
+    color: var(--color-navy); /* Navy text */
+}
+
+button {
+    background-color: var(--color-gold); /* Muted Gold background */
+    color: var(--color-white); /* White text */
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: var(--highlight-gold); /* Highlight Gold on hover */
+}
+
+.budget-list {
+    margin-top: 20px;
+}
+
+.budget-item {
+    background-color: rgba(255, 255, 255, 0.1); /* Light transparent background for budget items */
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px var(--shadow-color);
+}
+
+.budget-item p {
+    margin: 5px 0;
+}
